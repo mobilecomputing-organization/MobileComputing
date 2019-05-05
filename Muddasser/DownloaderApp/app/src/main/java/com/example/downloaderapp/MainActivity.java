@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 
 public class MainActivity extends AppCompatActivity implements ServiceConnection{
-    private static final int WRITE_REQUEST_CODE = 300;
     private static final String TAG = MainActivity.class.getSimpleName();
     private String url;
     private TextInputLayout editTextUrl;
@@ -48,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                         DownloadID = -1;
                     }
                 }
-                // ADD CODE to handle download ID
             }
 
         });

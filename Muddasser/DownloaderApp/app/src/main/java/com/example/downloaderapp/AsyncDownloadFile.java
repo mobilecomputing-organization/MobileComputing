@@ -67,7 +67,9 @@ public class AsyncDownloadFile extends AsyncTask<String, String, String> {
             fileName = timestamp + "_" + fileName;
 
             //External directory path to save file
-//            folder = Environment.getDataDirectory() + File.separator + Environment.DIRECTORY_DOWNLOADS + File.separator;
+            //folder = Environment.getDataDirectory() + File.separator + Environment.DIRECTORY_DOWNLOADS + File.separator;
+            folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator;
+
             //File dir = Environment.getDataDirectory();
             //Log.d(TAG, dir.toString());
 
@@ -79,7 +81,7 @@ public class AsyncDownloadFile extends AsyncTask<String, String, String> {
 //            }
 
             // Output stream to write file
-            OutputStream output = new FileOutputStream(folder + fileName);
+            OutputStream output = new FileOutputStream( folder + fileName );
 
             byte data[] = new byte[1024];
 
