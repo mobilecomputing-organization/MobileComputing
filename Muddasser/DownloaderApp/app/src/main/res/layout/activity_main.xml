@@ -39,7 +39,7 @@
         app:layout_constraintTop_toBottomOf="@+id/editTextUrl" />
 
     <TextView
-        android:id="@+id/Download URL"
+        android:id="@+id/Download_URL"
         android:layout_width="95dp"
         android:layout_height="50dp"
         android:contentDescription="Download URL"
