@@ -15,7 +15,7 @@
         android:layout_marginTop="183dp"
         android:layout_marginEnd="178dp"
         android:layout_marginBottom="246dp"
-        android:text="Button"
+        android:text="Click Me"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,17 +23,32 @@
 
     <TextView
         android:id="@+id/LastCall"
-        android:layout_width="314dp"
-        android:layout_height="84dp"
+        android:layout_width="351dp"
+        android:layout_height="151dp"
         android:layout_marginStart="42dp"
         android:layout_marginTop="68dp"
         android:layout_marginEnd="55dp"
         android:layout_marginBottom="8dp"
-        android:text="TextView"
+        android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.324"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.139" />
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ProgressBar
+        android:id="@+id/myprogressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="288dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.472"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.452" />
 </android.support.constraint.ConstraintLayout>

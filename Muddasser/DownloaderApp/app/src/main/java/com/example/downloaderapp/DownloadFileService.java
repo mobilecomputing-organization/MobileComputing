@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.BufferedInputStream;
@@ -19,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DownloadFileService extends Service{
+
 
     private DownloadFileServiceImpl impl;
     private AsyncDownloadFile DownloadAsync;
@@ -59,7 +61,7 @@ public class DownloadFileService extends Service{
         super.onDestroy();
     }
 
-    public class AsyncDownloadFile extends AsyncTask<String, String, String> {
+    public class AsyncDownloadFile extends AsyncTask<String, Integer, String> {
 
         //private ProgressDialog progressDialog;
         private String fileName;
@@ -132,7 +134,7 @@ public class DownloadFileService extends Service{
                     total += count;
                     // publishing the progress....
                     // After this onProgressUpdate will be called
-                    publishProgress("" + (int) ((total * 100) / lengthOfFile));
+                    publishProgress((int) ((total * 100) / lengthOfFile));
                     Log.d(TAG, "Progress: " + (int) ((total * 100) / lengthOfFile));
 
                     // writing data to file
@@ -157,7 +159,17 @@ public class DownloadFileService extends Service{
         /**
          * Updating progress bar
          */
-        protected void onProgressUpdate(String... progress) {
+        protected void onProgressUpdate(Integer... progress) {
+
+            Intent progressBC = new Intent();
+            progressBC.setAction("ProgressBC");
+
+            // uncomment this line if you want to send data
+            progressBC.putExtra("data",progress[0]);
+
+            sendBroadcast(progressBC);
+            Log.d(TAG, "Progress: called ");
+
             // setting progress percentage
             // progressDialog.setProgress(Integer.parseInt(progress[0]));
         }

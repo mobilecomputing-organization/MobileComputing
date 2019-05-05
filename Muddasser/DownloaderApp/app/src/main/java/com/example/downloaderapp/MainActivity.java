@@ -16,6 +16,7 @@ import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
@@ -26,6 +27,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     private IDownloadFile DownloadFileProxy = null;
     private int DownloadID;
     private TextView EndText;
+    ProgressBar myprogressBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,13 +38,17 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         //editTextUrl = findViewById(R.id.editTextUrl);
         EndText = findViewById(R.id.LastCall);
         Button downloadButton = findViewById(R.id.buttonDownload);
+        myprogressBar = findViewById(R.id.myprogressBar);
+        myprogressBar.setMax(100);
 
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 //Get the URL entered
-                url = "https://newevolutiondesigns.com/images/freebies/galaxy-wallpaper-1.jpg";
+                //url = "https://newevolutiondesigns.com/images/freebies/galaxy-wallpaper-1.jpg";
+                //url = "https://speed.hetzner.de/100MB.bin";
+                url = "http://ipv4.download.thinkbroadband.com/20MB.zip";
 
                 // Call the service with URL
                 if (DownloadFileProxy != null) {
@@ -65,14 +72,22 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 if(action.equals("com.example.downloaderapp"))
                 {
                    EndText.setText("File downloaded in the local path");
-
                     }
+                else if (action.equals("ProgressBC")){
+                    Bundle b = intent.getExtras();
+
+                    //EndText.setText(intent.getExtras().toString());
+                    myprogressBar.setProgress(b.getInt("data"));
+                }
                 }
         };
 
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("com.example.downloaderapp");
-        registerReceiver(receiver, intentFilter);
+        IntentFilter intentFilter1 = new IntentFilter();
+        intentFilter1.addAction("com.example.downloaderapp");
+        registerReceiver(receiver, intentFilter1);
+       IntentFilter intentFilter2 = new IntentFilter();
+        intentFilter2.addAction("ProgressBC");
+        registerReceiver(receiver, intentFilter2);
     }
 
     @Override
