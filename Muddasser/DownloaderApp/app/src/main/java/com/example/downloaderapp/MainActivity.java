@@ -1,5 +1,10 @@
 package com.example.downloaderapp;
 
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -42,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 if (DownloadFileProxy != null) {
                     try {
                         DownloadID = DownloadFileProxy.downloadFile(url);
-                        EndText.setText("DONE DONE DONE");
+                        EndText.setText("Please wait the File is Downloading");
                     } catch (RemoteException ex) {
                         DownloadID = -1;
                     }
@@ -52,6 +57,22 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         });
         Intent i = new Intent(this, DownloadFileService.class);
         bindService(i, this, BIND_AUTO_CREATE);
+
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if(action.equals("com.example.downloaderapp"))
+                {
+                   EndText.setText("File downloaded in the local path");
+
+                    }
+                }
+        };
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.example.downloaderapp");
+        registerReceiver(receiver, intentFilter);
     }
 
     @Override
