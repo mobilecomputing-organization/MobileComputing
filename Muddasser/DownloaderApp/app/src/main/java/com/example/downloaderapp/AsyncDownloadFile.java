@@ -60,11 +60,11 @@ public class AsyncDownloadFile extends AsyncTask<String, String, String> {
             String timestamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
 
             //Extract file name from URL
-            //fileName = f_url[0].substring(f_url[0].lastIndexOf('/') + 1, f_url[0].length());
-            fileName = "DownloadedFile";
+            fileName = f_url[0].substring(f_url[0].lastIndexOf('/') + 1, f_url[0].length());
+            //fileName = "DownloadedFile";
 
             //Append timestamp to file name
-            fileName = fileName  + "_" + timestamp;
+            fileName = timestamp + "_" + fileName;
 
             //External directory path to save file
             folder = Environment.DIRECTORY_DOWNLOADS + File.separator + "DownloaderApp/";
