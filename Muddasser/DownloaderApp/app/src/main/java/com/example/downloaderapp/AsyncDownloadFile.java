@@ -63,7 +63,8 @@ public class AsyncDownloadFile extends AsyncTask<String, String, String> {
             //fileName = "DownloadedFile";
 
             //Append timestamp to file name
-            fileName = timestamp  + "_" + fileName;
+
+            fileName = timestamp + "_" + fileName;
 
             //External directory path to save file
 //            folder = Environment.getDataDirectory() + File.separator + Environment.DIRECTORY_DOWNLOADS + File.separator;
