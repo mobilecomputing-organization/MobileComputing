@@ -1,11 +1,9 @@
 package com.example.downloaderapp;
 
-import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,7 +12,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
-import java.util.Date;import android.app.DownloadManager;
+import java.util.Date;
 
 
 /**
@@ -54,27 +52,30 @@ public class AsyncDownloadFile extends AsyncTask<String, String, String> {
             // getting file length
             int lengthOfFile = connection.getContentLength();
 
+
             // input stream to read file - with 8k buffer
             InputStream input = new BufferedInputStream(url.openStream(), 8192);
 
             String timestamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
 
             //Extract file name from URL
-            //fileName = f_url[0].substring(f_url[0].lastIndexOf('/') + 1, f_url[0].length());
-            fileName = "DownloadedFile";
+            fileName = f_url[0].substring(f_url[0].lastIndexOf('/') + 1, f_url[0].length());
+            //fileName = "DownloadedFile";
 
             //Append timestamp to file name
-            fileName = fileName  + "_" + timestamp;
+            fileName = timestamp  + "_" + fileName;
 
             //External directory path to save file
-            folder = Environment.DIRECTORY_DOWNLOADS + File.separator + "DownloaderApp/";
+//            folder = Environment.getDataDirectory() + File.separator + Environment.DIRECTORY_DOWNLOADS + File.separator;
+            //File dir = Environment.getDataDirectory();
+            //Log.d(TAG, dir.toString());
 
             //Create DownloaderApp folder if it does not exist
-            File directory = new File(folder);
-
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
+//            File directory = new File(folder);
+//
+//            if (!directory.exists()) {
+//                directory.mkdirs();
+//            }
 
             // Output stream to write file
             OutputStream output = new FileOutputStream(folder + fileName);

@@ -1,63 +1,70 @@
 package com.example.downloaderapp;
 
-import android.Manifest;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.content.Intent;
+import android.content.ComponentName;
+import android.content.ServiceConnection;
+import android.os.IBinder;
+import android.os.RemoteException;
+import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends AppCompatActivity implements ServiceConnection{
     private static final int WRITE_REQUEST_CODE = 300;
     private static final String TAG = MainActivity.class.getSimpleName();
     private String url;
-    private EditText editTextUrl;
+    private TextInputLayout editTextUrl;
+    private IDownloadFile DownloadFileProxy = null;
+    private int DownloadID;
+    private TextView EndText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        editTextUrl = findViewById(R.id.editTextUrl);
-
+        //editTextUrl = findViewById(R.id.editTextUrl);
+        EndText = findViewById(R.id.LastCall);
         Button downloadButton = findViewById(R.id.buttonDownload);
+
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Check if SD card is present or not
-                /*if (CheckForSDCard.isSDCardPresent()) {
-
-                    //check if app has permission to write to the external storage.
-                    if (EasyPermissions.hasPermissions(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                        //Get the URL entered
-                        url = editTextUrl.getText().toString();
-                        new DownloadFile().execute(url);
-
-                    } else {
-                        //If permission is not present request for the same.
-                        EasyPermissions.requestPermissions(MainActivity.this, getString(R.string.write_file), WRITE_REQUEST_CODE, Manifest.permission.READ_EXTERNAL_STORAGE);
-                    }
-
-
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            "SD Card not found", Toast.LENGTH_LONG).show();
-
-                }*/
 
                 //Get the URL entered
-                url = editTextUrl.getText().toString();
+                url = "https://newevolutiondesigns.com/images/freebies/galaxy-wallpaper-1.jpg";
 
                 // Call the service with URL
-                // ADD CODE to call service
+                if (DownloadFileProxy != null) {
+                    try {
+                        DownloadID = DownloadFileProxy.downloadFile(url);
+                        EndText.setText("DONE DONE DONE");
+                    } catch (RemoteException ex) {
+                        DownloadID = -1;
+                    }
+                }
+                // ADD CODE to handle download ID
             }
 
         });
-
+        Intent i = new Intent(this, DownloadFileService.class);
+        bindService(i, this, BIND_AUTO_CREATE);
     }
+
+    @Override
+    public void onServiceConnected(ComponentName CompName, IBinder ibinder) {
+        DownloadFileProxy = IDownloadFile.Stub.asInterface(ibinder);
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName CompName) {
+        DownloadFileProxy = null;
+    }
+
 }
 
