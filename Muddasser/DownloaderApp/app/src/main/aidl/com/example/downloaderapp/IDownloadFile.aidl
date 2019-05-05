@@ -8,5 +8,5 @@ interface IDownloadFile {
      * Demonstrates some basic types that you can use as parameters
      * and return values in AIDL.
      */
-    void downloadFile( String url);
+    int downloadFile( String url);
 }
