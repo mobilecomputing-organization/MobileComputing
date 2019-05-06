@@ -8,5 +8,5 @@ interface ISensorVal {
      * Demonstrates some basic types that you can use as parameters
      * and return values in AIDL.
      */
-    float GetSensorVal();
+    float[] GetSensorVal();
 }

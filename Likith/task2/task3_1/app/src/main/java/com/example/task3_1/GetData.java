@@ -9,7 +9,7 @@ import android.hardware.SensorManager;
 public class GetData implements SensorEventListener {
     private SensorManager sensor_manager;
     private Sensor gyroSensor;
-    float Data;
+    float Data[] = {0,0,0};
 
     public GetData(Context context){
         sensor_manager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
@@ -24,7 +24,9 @@ public class GetData implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        Data = event.values[0];
+        Data[0] = event.values[0];
+        Data[1] = event.values[1];
+        Data[2] = event.values[2];
     }
 
     public void register(){

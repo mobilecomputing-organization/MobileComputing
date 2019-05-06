@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
     TextView SensorText;
     TextView TimerText;
-    private float SensorValue = 0;
+    private float[] SensorValue = {0,0,0};
     CountDownTimer Timer;
     private ISensorVal sensorvalproxy = null;
 
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                     try {
                         SensorValue = sensorvalproxy.GetSensorVal();
                     } catch (RemoteException ex) {
-                        SensorValue = -1;
+                        SensorValue[0] = -1;
                     }
                 }
                 SensorText.setText("Val:" + SensorValue);

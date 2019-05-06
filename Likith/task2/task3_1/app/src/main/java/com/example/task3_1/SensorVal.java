@@ -12,7 +12,7 @@ public class SensorVal extends Service {
     private class SensorValImpl extends ISensorVal.Stub {
 
         @Override
-        public float GetSensorVal() {
+        public float[] GetSensorVal() {
             return mSensorData.Data;//sensor_event.values[0];
             //    return 0;
         }
