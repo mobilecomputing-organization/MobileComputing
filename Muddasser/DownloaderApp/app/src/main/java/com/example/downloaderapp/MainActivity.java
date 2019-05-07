@@ -75,7 +75,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 //Get the URL entered
                 //url = "https://newevolutiondesigns.com/images/freebies/galaxy-wallpaper-1.jpg";
                 //url = "https://speed.hetzner.de/100MB.bin";
-                url = "http://ipv4.download.thinkbroadband.com/20MB.zip";
+                //url = "http://ipv4.download.thinkbroadband.com/20MB.zip";
+                url = "http://ipv4.download.thinkbroadband.com/10MB.zip";
 
                 // Call the service with URL
                 if (DownloadFileProxy != null) {

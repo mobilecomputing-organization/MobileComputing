@@ -30,6 +30,7 @@ public class DownloadFileService extends Service{
 
         @Override
         public int downloadFile(String Str) {
+            DownloadAsync = new AsyncDownloadFile();
             DownloadAsync.execute(Str);
             return 0;
         }
@@ -39,7 +40,6 @@ public class DownloadFileService extends Service{
     @Override
     public void onCreate() {
         super.onCreate();
-        DownloadAsync = new AsyncDownloadFile();
         impl = new DownloadFileServiceImpl();
     }
 
@@ -155,8 +155,11 @@ public class DownloadFileService extends Service{
             progressBC.putExtra("curr_dwn",progress[1]);
             progressBC.putExtra("file_size",progress[2]);
 
-            sendBroadcast(progressBC);
-            Log.d(TAG, "Progress: called ");
+            if(progress[0] % 5 == 0)
+            {
+                sendBroadcast(progressBC);
+                Log.d(TAG, "Progress: called ");
+            }
         }
 
         @Override
