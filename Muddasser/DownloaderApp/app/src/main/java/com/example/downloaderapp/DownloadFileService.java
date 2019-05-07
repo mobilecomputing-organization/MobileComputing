@@ -3,6 +3,7 @@ package com.example.downloaderapp;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
@@ -44,10 +45,6 @@ public class DownloadFileService extends Service{
 
     @Override
     public IBinder onBind(Intent intent){
-//        intent = new Intent();
-//        intent.setAction("com.example.broadcast.MY_NOTIFICATION");
-//        intent.putExtra("data","Notice me senpai!");
-//        sendBroadcast(intent);
         return impl;
     }
 
@@ -63,7 +60,6 @@ public class DownloadFileService extends Service{
 
     public class AsyncDownloadFile extends AsyncTask<String, Integer, String> {
 
-        //private ProgressDialog progressDialog;
         private String fileName;
         private String folder;
         private boolean isDownloaded;
@@ -76,10 +72,6 @@ public class DownloadFileService extends Service{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-        /*this.progressDialog = new ProgressDialog(MainActivity.this);
-        this.progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        this.progressDialog.setCancelable(false);
-        this.progressDialog.show();*/
         }
 
         /**
@@ -92,36 +84,23 @@ public class DownloadFileService extends Service{
                 URL url = new URL(f_url[0]);
                 URLConnection connection = url.openConnection();
                 connection.connect();
-                // getting file length
-                int lengthOfFile = connection.getContentLength();
 
+                // Get file length
+                int lengthOfFile = connection.getContentLength();
 
                 // input stream to read file - with 8k buffer
                 InputStream input = new BufferedInputStream(url.openStream(), 8192);
 
                 String timestamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
 
-                //Extract file name from URL
+                // Extract file name from URL
                 fileName = f_url[0].substring(f_url[0].lastIndexOf('/') + 1, f_url[0].length());
-                //fileName = "DownloadedFile";
 
-                //Append timestamp to file name
-
+                // Append timestamp to file name
                 fileName = timestamp + "_" + fileName;
 
                 //External directory path to save file
-                //folder = Environment.getDataDirectory() + File.separator + Environment.DIRECTORY_DOWNLOADS + File.separator;
                 folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator;
-
-                //File dir = Environment.getDataDirectory();
-                //Log.d(TAG, dir.toString());
-
-                //Create DownloaderApp folder if it does not exist
-//            File directory = new File(folder);
-//
-//            if (!directory.exists()) {
-//                directory.mkdirs();
-//            }
 
                 // Output stream to write file
                 OutputStream output = new FileOutputStream( folder + fileName );
@@ -132,10 +111,17 @@ public class DownloadFileService extends Service{
 
                 while ((count = input.read(data)) != -1) {
                     total += count;
-                    // publishing the progress....
+
                     // After this onProgressUpdate will be called
-                    publishProgress((int) ((total * 100) / lengthOfFile));
-                    Log.d(TAG, "Progress: " + (int) ((total * 100) / lengthOfFile));
+                    double d_percent = (((total * 100) / lengthOfFile));
+                    if((d_percent > 0) && (((int)d_percent) % 1) == 0)
+                    {
+                        int arr_temp[] = {(int)d_percent, (int)total, lengthOfFile};
+
+                        // Publish the progress
+                        publishProgress(arr_temp[0], arr_temp[1], arr_temp[2]);
+                        Log.d(TAG,  "Progress: " + d_percent + "%.");
+                    }
 
                     // writing data to file
                     output.write(data, 0, count);
@@ -164,40 +150,31 @@ public class DownloadFileService extends Service{
             Intent progressBC = new Intent();
             progressBC.setAction("ProgressBC");
 
-            // uncomment this line if you want to send data
-            progressBC.putExtra("data",progress[0]);
+            // Update progress info
+            progressBC.putExtra("percent",progress[0]);
+            progressBC.putExtra("curr_dwn",progress[1]);
+            progressBC.putExtra("file_size",progress[2]);
 
             sendBroadcast(progressBC);
             Log.d(TAG, "Progress: called ");
-
-            // setting progress percentage
-            // progressDialog.setProgress(Integer.parseInt(progress[0]));
         }
-
 
         @Override
         protected void onPostExecute(String message) {
-            // dismiss the dialog after the file was downloaded
-            // this.progressDialog.dismiss();
             sendMyBroadCast();
-
 
             // Display File path after downloading
             Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
         }
 
+        /* Send Broadcast*/
         private void sendMyBroadCast()
         {
             try
             {
                 Intent broadCastIntent = new Intent();
-                broadCastIntent.setAction("com.example.downloaderapp");
-
-                // uncomment this line if you want to send data
-//            broadCastIntent.putExtra("data", "abc");
-
+                broadCastIntent.setAction("com.example.downloaderapp.DOWNLOAD_NOTIFICATION");
                 sendBroadcast(broadCastIntent);
-
             }
             catch (Exception ex)
             {
