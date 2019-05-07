@@ -13,7 +13,8 @@ public class GetData implements SensorEventListener {
 
     public GetData(Context context){
         sensor_manager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        gyroSensor = sensor_manager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        //gyroSensor = sensor_manager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        gyroSensor = sensor_manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
     }
 
     @Override

@@ -23,9 +23,9 @@
         app:layout_constraintVertical_bias="0.135" />
 
     <TextView
-        android:id="@+id/SensorVal"
-        android:layout_width="310dp"
-        android:layout_height="131dp"
+        android:id="@+id/SensorValX"
+        android:layout_width="307dp"
+        android:layout_height="76dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
@@ -36,4 +36,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.638" />
+
+    <TextView
+        android:id="@+id/SensorValZ"
+        android:layout_width="307dp"
+        android:layout_height="76dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.871" />
+
+    <TextView
+        android:id="@+id/SensorValY"
+        android:layout_width="307dp"
+        android:layout_height="76dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.755" />
 </android.support.constraint.ConstraintLayout>

@@ -39,7 +39,7 @@ public class SensorVal extends Service {
 
     @Override
     public void onDestroy() {
-        mSensorData.register();
+        mSensorData.unregister();
         super.onDestroy();
     }
 }

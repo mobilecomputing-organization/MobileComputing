@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements ServiceConnection {
 
-    TextView SensorText;
+    TextView SensorTextX,SensorTextY,SensorTextZ;
     TextView TimerText;
     private float[] SensorValue = {0,0,0};
     CountDownTimer Timer;
@@ -22,9 +22,15 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SensorText = findViewById(R.id.SensorVal);
+        SensorTextX = findViewById(R.id.SensorValX);
+        SensorTextY = findViewById(R.id.SensorValY);
+        SensorTextZ = findViewById(R.id.SensorValZ);
+
         TimerText = findViewById(R.id.Timer);
-        SensorText.setText(String.valueOf(SensorValue));
+        //SensorText.setText(String.valueOf(SensorValue));
+        SensorTextX.setText("0.0");
+        SensorTextY.setText("0.0");
+        SensorTextZ.setText("0.0");
 
         RunTimer();
 
@@ -57,7 +63,11 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                         SensorValue[0] = -1;
                     }
                 }
-                SensorText.setText("Val:" + SensorValue);
+                //SensorText.setText("Val:" + SensorValue);
+                SensorTextX.setText( Float.toString(SensorValue[0]));
+                SensorTextY.setText( Float.toString(SensorValue[1]));
+                SensorTextZ.setText( Float.toString(SensorValue[2]));
+
                 Timer.start();
             }
         }.start();
