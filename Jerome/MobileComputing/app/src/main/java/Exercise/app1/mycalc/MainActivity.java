@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     Operations operator = Operations.NONE;
 
     Boolean InOperator,DBZ = false;
+    private Boolean IsResultCalculated = false;
 
     double CalcResult = 0.0;
 
@@ -76,6 +77,13 @@ public class MainActivity extends AppCompatActivity {
         onebut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (IsResultCalculated) {
+                    result.setText("");
+                    operand1 = 0;
+                    operand2 = 0;
+                    operator = Operations.NONE;
+                    IsResultCalculated = false;
+                }
                 String prevText = result.getText().toString();
                 result.setText(prevText + "1");
                 InOperator = false;
@@ -84,6 +92,13 @@ public class MainActivity extends AppCompatActivity {
         twobut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (IsResultCalculated) {
+                    result.setText("");
+                    operand1 = 0;
+                    operand2 = 0;
+                    operator = Operations.NONE;
+                    IsResultCalculated = false;
+                }
                 String prevText = result.getText().toString();
                 result.setText(prevText + "2");
                 InOperator = false;
@@ -92,6 +107,13 @@ public class MainActivity extends AppCompatActivity {
         threebut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (IsResultCalculated) {
+                    result.setText("");
+                    operand1 = 0;
+                    operand2 = 0;
+                    operator = Operations.NONE;
+                    IsResultCalculated = false;
+                }
                 String prevText = result.getText().toString();
                 result.setText(prevText + "3");
                 InOperator = false;
@@ -100,6 +122,13 @@ public class MainActivity extends AppCompatActivity {
         fourbut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (IsResultCalculated) {
+                    result.setText("");
+                    operand1 = 0;
+                    operand2 = 0;
+                    operator = Operations.NONE;
+                    IsResultCalculated = false;
+                }
                 String prevText = result.getText().toString();
                 result.setText(prevText + "4");
                 InOperator = false;
@@ -108,6 +137,13 @@ public class MainActivity extends AppCompatActivity {
         fivebut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (IsResultCalculated) {
+                    result.setText("");
+                    operand1 = 0;
+                    operand2 = 0;
+                    operator = Operations.NONE;
+                    IsResultCalculated = false;
+                }
                 String prevText = result.getText().toString();
                 result.setText(prevText + "5");
                 InOperator = false;
@@ -116,6 +152,13 @@ public class MainActivity extends AppCompatActivity {
         sixbut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (IsResultCalculated) {
+                    result.setText("");
+                    operand1 = 0;
+                    operand2 = 0;
+                    operator = Operations.NONE;
+                    IsResultCalculated = false;
+                }
                 String prevText = result.getText().toString();
                 result.setText(prevText + "6");
                 InOperator = false;
@@ -124,6 +167,13 @@ public class MainActivity extends AppCompatActivity {
         sevenbut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (IsResultCalculated) {
+                    result.setText("");
+                    operand1 = 0;
+                    operand2 = 0;
+                    operator = Operations.NONE;
+                    IsResultCalculated = false;
+                }
                 String prevText = result.getText().toString();
                 result.setText(prevText + "7");
                 InOperator = false;
@@ -132,6 +182,13 @@ public class MainActivity extends AppCompatActivity {
         eightbut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (IsResultCalculated) {
+                    result.setText("");
+                    operand1 = 0;
+                    operand2 = 0;
+                    operator = Operations.NONE;
+                    IsResultCalculated = false;
+                }
                 String prevText = result.getText().toString();
                 result.setText(prevText + "8");
                 InOperator = false;
@@ -140,6 +197,13 @@ public class MainActivity extends AppCompatActivity {
         ninebut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (IsResultCalculated) {
+                    result.setText("");
+                    operand1 = 0;
+                    operand2 = 0;
+                    operator = Operations.NONE;
+                    IsResultCalculated = false;
+                }
                 String prevText = result.getText().toString();
                 result.setText(prevText + "9");
                 InOperator = false;
@@ -148,6 +212,13 @@ public class MainActivity extends AppCompatActivity {
         zerobut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (IsResultCalculated) {
+                    result.setText("");
+                    operand1 = 0;
+                    operand2 = 0;
+                    operator = Operations.NONE;
+                    IsResultCalculated = false;
+                }
                 String prevText = result.getText().toString();
                 result.setText(prevText + "0");
                 InOperator = false;
@@ -163,10 +234,10 @@ public class MainActivity extends AppCompatActivity {
 
                 //if (dotpresent == -1)
                 //{
-                    if(prevText == "")
-                        result.setText(prevText + "0.");
-                    else
-                        result.setText(prevText + ".");
+                if(prevText == "")
+                    result.setText(prevText + "0.");
+                else
+                    result.setText(prevText + ".");
                 //}
                 //else
                 //{
@@ -174,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
                 //    toast.show();
                 //}
                 InOperator = false;
+                IsResultCalculated = false;
             }
         });
 
@@ -185,6 +257,7 @@ public class MainActivity extends AppCompatActivity {
                 operand2 = 0;
                 operator = Operations.NONE;
                 InOperator = false;
+                IsResultCalculated = false;
                 // reset the flags here
             }
         });
@@ -205,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
                     result.setText(SS + " + ");
                 }
                 InOperator = true;
-
+                IsResultCalculated = false;
             }
         });
         minusbut.setOnClickListener(new View.OnClickListener() {
@@ -222,6 +295,7 @@ public class MainActivity extends AppCompatActivity {
                     result.setText(SS + " - ");
                 }
                 InOperator = true;
+                IsResultCalculated = false;
             }
         });
         divbut.setOnClickListener(new View.OnClickListener() {
@@ -241,6 +315,7 @@ public class MainActivity extends AppCompatActivity {
                     result.setText(SS + " / ");
                 }
                 InOperator = true;
+                IsResultCalculated = false;
             }
         });
         mulbut.setOnClickListener(new View.OnClickListener() {
@@ -260,6 +335,7 @@ public class MainActivity extends AppCompatActivity {
                     result.setText(SS + " x ");
                 }
                 InOperator = true;
+                IsResultCalculated = false;
             }
         });
 
@@ -314,6 +390,8 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         result.setText(Double.toString(CalcResult));
+                        IsResultCalculated = true;
+
 
 
                     }
