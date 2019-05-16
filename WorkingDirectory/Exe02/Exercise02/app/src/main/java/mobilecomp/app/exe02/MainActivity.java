@@ -11,6 +11,7 @@ import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.ParcelUuid;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,25 +30,28 @@ public class MainActivity extends AppCompatActivity {
     private int REQUEST_ENABLE_BT = 1234; // just to pass as an argument
     private BluetoothLeScanner LeScanner;
     private BluetoothAdapter.LeScanCallback leScanCallback;
-    private UUID uuid = UUID.fromString("00000002-0000-0000-FDFD-FDFDFDFDFDFD");
+    private UUID myuuid = UUID.fromString("00000002-0000-0000-FDFD-FDFDFDFDFDFD");
     private BluetoothDevice bledevice;
     private ScanCallback scanCallback;
     private ScanFilter scanfilter;
     private ScanSettings scanSettings;
     private Handler mHandler;
-    private int SCAN_PERIOD = 10000;
+    private int SCAN_PERIOD = 20000;// 10 seconds
     private  boolean enable = true;
     private Context activityContext;
     private static final String TAG = "MyApp";
     private BluetoothDevice mydevice;
-
+    private String appname = "IPVS-LIGHT";
+    public View myv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         //GUI variables
-        Button ScanButton = (Button) findViewById(R.id.ScanButton);
+        final Button ScanButton = (Button) findViewById(R.id.ScanButton);
         final TextView ScanRes = (TextView) findViewById(R.id.ScanRes);
 
         // Initializes Bluetooth adapter
@@ -67,35 +71,46 @@ public class MainActivity extends AppCompatActivity {
         scanCallback = new ScanCallback() {
             @Override
             public void onScanResult(int callbackType, ScanResult result) {
-
-
-
-                //ScanRes.setText("calback called ");
+                ScanRes.setText(ScanRes.getText()+ "new ScanRes =  ");
                 Log.i(TAG,"Called");
-
-
-                //Toast toast = Toast.makeText(activityContext,"Callback called", Toast.LENGTH_SHORT);
-                //toast.setGravity(Gravity.CENTER | Gravity.BOTTOM, 0, 0);
-                //toast.show();
-
-                ScanRes.setText(result.getDevice().getName());
-                if (result.getDevice().getName() != null)
+                //ScanRes.setText(result.getDevice().getName());
+                if (result.getScanRecord()!= null)
                 {
                     Log.i(TAG,"inside If");
-                    Log.i(TAG,result.getDevice().getName());
-                    if (result.getDevice().getUuids()!= null){
-                        if(result.getDevice().getUuids().equals(uuid))
-                        mydevice = result.getDevice();
+                  //  Log.i(TAG,result.getDevice().getName());
+                    ScanRes.setText(ScanRes.getText()+ "(ScanRec not null +  ");
+                        if(result.getScanRecord().getDeviceName()!= null){
+                            ScanRes.setText(ScanRes.getText()+ " Device name not null +  "
+                                    + result.getScanRecord().getDeviceName());
+                            if (result.getScanRecord().getDeviceName().equals(appname))
+                            {
+                                ScanRes.setText(ScanRes.getText()+ "name matched +  ");
+                                ScanButton.setText("Scan Again");
+                                LeScanner.stopScan(scanCallback);
+                                mydevice = result.getDevice();
+                                //Intent intent = new Intent(v.getContext(),BtleServiceActivity.class);
+                                //startActivity(intent);
+                                ScanRes.setText(ScanRes.getText()+"Dev Add is " + mydevice.getAddress());
 
-                        Log.i(TAG,result.getDevice().getName());
-                        ScanRes.setText("connected");
-                    }
+                            }
+                        }
+                        //mydevice = result.getDevice();
+                        /*List<ParcelUuid> uuids = result.getScanRecord().getServiceUuids();
+                        if(uuids!= null){
+                            ScanRes.setText(ScanRes.getText()+ "uuids not null :  ");
+                            for (ParcelUuid uuid : uuids)
+                            {
+                                UUID resuuid = uuid.getUuid();
+                                ScanRes.setText(ScanRes.getText()+ resuuid.toString() + ") ");
+                            }
+                        }*/
 
-
-
+                        /*if(result.getScanRecord().getServiceUuids() != null)
+                        ScanRes.setText(ScanRes.getText()+ "UUID  "+result.getScanRecord().getServiceUuids());
+                        else
+                            ScanRes.setText(ScanRes.getText()+ result.getDevice().toString());*/
                     //mydevice = result.getDevice();
                     //enable = false;
-
                 }
 
 
@@ -108,7 +123,9 @@ public class MainActivity extends AppCompatActivity {
         ScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ScanRes.setText("Hi !!");
+                myv = v;
+
+                ScanRes.setText("");
                 enable = true;
                 LeScanner = bluetoothAdapter.getBluetoothLeScanner();
                 if (enable)
@@ -118,11 +135,13 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             //mScanning = false;
 
+                            ScanButton.setText("Scan Again");
                             LeScanner.stopScan(scanCallback);
                         }
                     }, SCAN_PERIOD);
 
                     //mScanning = true;
+                    ScanButton.setText("Scanning...");
                     LeScanner.startScan(scanCallback);
                 } else
                 {
