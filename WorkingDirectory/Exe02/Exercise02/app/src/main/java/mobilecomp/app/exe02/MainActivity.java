@@ -200,11 +200,11 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent;
                 if (appname == "IPVS-LIGHT")
                 {
-                    intent = new Intent(v.getContext(),BtleServiceActivity.class);
+                    intent = new Intent(v.getContext(),BtleServiceActivityfan.class);
                 }
                 else // (appname == "IPVSWeather") //TODO// THIS MIGHT CAUSE ISSUES
                 {
-                    intent = new Intent(v.getContext(),BtleServiceActivityfan.class);
+                    intent = new Intent(v.getContext(),BtleServiceActivity.class);
                 }
                 intent.putExtra("Device",MyDevice);
                 startActivity(intent);
