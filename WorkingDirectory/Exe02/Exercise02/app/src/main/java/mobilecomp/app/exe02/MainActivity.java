@@ -23,42 +23,45 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity {
 
     private BluetoothAdapter bluetoothAdapter;
-    private int REQUEST_ENABLE_BT = 1234; // just to pass as an argument
     private BluetoothLeScanner LeScanner;
-    private BluetoothAdapter.LeScanCallback leScanCallback;
-    private UUID myuuid = UUID.fromString("00000002-0000-0000-FDFD-FDFDFDFDFDFD");
-    private BluetoothDevice bledevice;
+    private BluetoothDevice MyDevice;
     private ScanCallback scanCallback;
-    private ScanFilter scanfilter;
-    private ScanSettings scanSettings;
     private Handler mHandler;
-    private int SCAN_PERIOD = 10000;// 10 seconds
-    private  boolean enable = true;
-    private Context activityContext;
+
+    //private UUID myuuid = UUID.fromString("00000002-0000-0000-FDFD-FDFDFDFDFDFD");
+    //private BluetoothDevice bledevice;
+    //private ScanFilter scanfilter;
+    //private ScanSettings scanSettings;
+    //private Context activityContext;
+
     private static final String TAG = "MyApp";
-    private BluetoothDevice mydevice;
-    //private String appname = "IPVS-LIGHT";
-    private String appname =null;
+    private final int REQUEST_ENABLE_BT = 1234; // just to pass as an argument
+    private final int SCAN_PERIOD = 10000;// 10 seconds
+//    private final boolean enable = true;
+
+    private String appname = null;
     public View myv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
         //GUI variables
+        // TODO// Check whether to declare variables up
         final Button ScanTemp = (Button) findViewById(R.id.ScanTemperature);
         final Button ScanLight = (Button) findViewById(R.id.ScanLight);
         final Button ConnectBtn = (Button) findViewById(R.id.Connect);
         final TextView ScanRes = (TextView) findViewById(R.id.ScanRes);
+
+        //TODO// Change the name
         ConnectBtn.setVisibility(View.INVISIBLE);
+
+        mHandler = new Handler();
 
         // Initializes Bluetooth adapter
         final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
-        //LeScanner = bluetoothAdapter.getBluetoothLeScanner();
-        //final ScanCallback callback;
 
         // Ensures Bluetooth is available on the device and it is enabled. If not,
         // displays a dialog requesting user permission to enable Bluetooth.
@@ -77,23 +80,27 @@ public class MainActivity extends AppCompatActivity {
                 if (result.getScanRecord()!= null)
                 {
                     Log.i(TAG,"inside If");
-                  //  Log.i(TAG,result.getDevice().getName());
+                    //  Log.i(TAG,result.getDevice().getName());
                     ScanRes.setText(ScanRes.getText()+ "(ScanRec not null +  ");
-                        if(result.getScanRecord().getDeviceName()!= null){
-                            ScanRes.setText(ScanRes.getText()+ " Device name not null +  "
-                                    + result.getScanRecord().getDeviceName());
-                            if (result.getScanRecord().getDeviceName().equals(appname))
-                            {
-                                LeScanner.stopScan(scanCallback);
-                                ScanRes.setText(ScanRes.getText()+ "name matched +  ");
-                                ScanTemp.setText("SCAN APP1");
-                                ScanLight.setText("SCAN APP2");
-                                mydevice = result.getDevice();
-                                ScanRes.setText(ScanRes.getText()+"Dev Add is " + mydevice.getAddress());
-                                ConnectBtn.setVisibility(View.VISIBLE);
-                            }
+                    if(result.getScanRecord().getDeviceName()!= null){
+                        ScanRes.setText(ScanRes.getText()+ " Device name not null +  "
+                                + result.getScanRecord().getDeviceName());
+                        if (result.getScanRecord().getDeviceName().equals(appname))
+                        {
+                            LeScanner.stopScan(scanCallback);
+
+                            ScanRes.setText(ScanRes.getText()+ "name matched +  ");
+
+                            ScanTemp.setText("SCAN TEMP"); //TODO Change name in all places
+                            ScanLight.setText("SCAN FAN"); //TODO Change name in all places
+                            MyDevice = result.getDevice();
+
+                            ScanRes.setText(ScanRes.getText()+"Dev Add is " + MyDevice.getAddress());
+                            // Make connect button visible
+                            ConnectBtn.setVisibility(View.VISIBLE);
                         }
-                        //mydevice = result.getDevice();
+                    }
+                    //mydevice = result.getDevice();
                         /*List<ParcelUuid> uuids = result.getScanRecord().getServiceUuids();
                         if(uuids!= null){
                             ScanRes.setText(ScanRes.getText()+ "uuids not null :  ");
@@ -111,45 +118,42 @@ public class MainActivity extends AppCompatActivity {
                     //mydevice = result.getDevice();
                     //enable = false;
                 }
-
-
             }
         };
-
-        mHandler = new Handler();
 
         // Button used to scan for the devices
         ScanTemp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // To make button invisible again if you want to scan again
                 ConnectBtn.setVisibility(View.INVISIBLE);
+
                 myv = v;
                 appname = "IPVSWeather";
 
                 ScanRes.setText("");
-                enable = true;
+                //enable = true;
                 LeScanner = bluetoothAdapter.getBluetoothLeScanner();
-                if (enable)
-                {
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            //mScanning = false;
+                //        if (enable)
+                //        {
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //mScanning = false;
+                        ScanTemp.setText("SCAN TEMP");
+                        ScanLight.setText("SCAN FAN");
+                        LeScanner.stopScan(scanCallback);
+                    }
+                }, SCAN_PERIOD);
 
-                            ScanTemp.setText("SCAN APP1");
-                            ScanLight.setText("SCAN APP2");
-                            LeScanner.stopScan(scanCallback);
-                        }
-                    }, SCAN_PERIOD);
-
-                    //mScanning = true;
-                    ScanTemp.setText("Scanning...");
-                    LeScanner.startScan(scanCallback);
-                } else
-                {
-                    //mScanning = false;
-                    LeScanner.stopScan(scanCallback);
-                }
+                //mScanning = true;
+                ScanTemp.setText("Scanning...");
+                LeScanner.startScan(scanCallback);
+                //        } else
+                //        {
+                //mScanning = false;
+                //            LeScanner.stopScan(scanCallback);
+                //        }
                 //LeScanner.startScan(scanfilter,scanSettings,scanCallback);
             }
         });
@@ -162,50 +166,49 @@ public class MainActivity extends AppCompatActivity {
                 appname = "IPVS-LIGHT";
 
                 ScanRes.setText("");
-                enable = true;
+                //enable = true;
+                // TODO// LOOK AT LATER
                 LeScanner = bluetoothAdapter.getBluetoothLeScanner();
-                if (enable)
-                {
+//                if (enable)
+//                {
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             //mScanning = false;
-                            ScanTemp.setText("SCAN App1");
-                            ScanLight.setText("SCAN App2");
+                            ScanTemp.setText("SCAN TEMP");
+                            ScanLight.setText("SCAN FAN");
                             LeScanner.stopScan(scanCallback);
                         }
                     }, SCAN_PERIOD);
 
                     //mScanning = true;
                     ScanLight.setText("Scanning...");
+
                     LeScanner.startScan(scanCallback);
-                } else
-                {
-                    //mScanning = false;
-                    LeScanner.stopScan(scanCallback);
-                }
+//                } else
+//                {
+//                    //mScanning = false;
+//                    LeScanner.stopScan(scanCallback);
+//                //}
                 //LeScanner.startScan(scanfilter,scanSettings,scanCallback);
             }
         });
+
         ConnectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent;
                 if (appname == "IPVS-LIGHT")
                 {
-                    Intent intent = new Intent(v.getContext(),BtleServiceActivity.class);
-                    intent.putExtra("Device",mydevice);
-                    startActivity(intent);
+                    intent = new Intent(v.getContext(),BtleServiceActivity.class);
                 }
-                else if (appname == "IPVSWeather")
+                else // (appname == "IPVSWeather") //TODO// THIS MIGHT CAUSE ISSUES
                 {
-                    Intent intent = new Intent(v.getContext(),BtleServiceActivityfan.class);
-                    intent.putExtra("Device",mydevice);
-                    startActivity(intent);
+                    intent = new Intent(v.getContext(),BtleServiceActivityfan.class);
                 }
+                intent.putExtra("Device",MyDevice);
+                startActivity(intent);
             }
         });
-
-
-
     }
 }
