@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/ScanTemperature"
+        android:id="@+id/LeftButton"
         android:layout_width="0dp"
         android:layout_height="58dp"
         android:layout_marginStart="8dp"
@@ -17,7 +17,7 @@
         android:text="scan temp"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/ScanLight"
+        app:layout_constraintEnd_toStartOf="@+id/RightButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.013" />
@@ -38,7 +38,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/ScanLight"
+        android:id="@+id/RightButton"
         android:layout_width="0dp"
         android:layout_height="58dp"
         android:layout_marginStart="8dp"
@@ -49,12 +49,12 @@
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ScanTemperature"
+        app:layout_constraintStart_toEndOf="@+id/LeftButton"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.015" />
 
     <Button
-        android:id="@+id/Connect"
+        android:id="@+id/DownButton"
         android:layout_width="212dp"
         android:layout_height="58dp"
         android:layout_marginTop="8dp"
