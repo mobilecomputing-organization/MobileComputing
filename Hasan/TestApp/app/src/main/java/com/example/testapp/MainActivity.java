@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.BluetoothLeScanner;
@@ -42,12 +43,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private UUID fanServiceuuid = UUID.fromString("00000001-0000-0000-FDFD-FDFDFDFDFDFD");
     private UUID Fan_Intensity=  UUID.fromString("10000001-0000-0000-FDFD-FDFDFDFDFDFD");
     public boolean bReadTemprature = false;
+    public boolean bNotify= false;
     public String strHumidityVal = "N/A";
     public String strTempVal = "N/A";
 
     private UUID WeatherServiceUUID = UUID.fromString("00000002-0000-0000-FDFD-FDFDFDFDFDFD");
     private UUID Temperature_Measurement =  UUID.fromString("00002a1c-0000-1000-8000-00805f9b34fb")  ;
     private UUID Humidity_Measurement = UUID.fromString("00002a6f-0000-1000-8000-00805f9b34fb")  ;
+    private UUID Notify_Descriptor_UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");// to check
+
 
     BluetoothGattCharacteristic Temp_characteristic;
     BluetoothGattCharacteristic Humidity_characteristic;
@@ -67,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         READ_ALL,
         SCANNING,
         WEATHER,
+        NOTIFY_WEATHER,
         //    TEMPERATURE_READ,
         FAN_Write
     }
@@ -81,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         READ_TEMPRATURE,
         READ_HUMIDITY,
         NOTIFY_WEATHER,
+        NOTIFY_TEMPERATURE,
+        NOTIFY_HUMIDITY
     }
 
     private ButtonStates LeftButtonState = ButtonStates.SCAN_WEATHER;
@@ -115,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (IsWeatherSelected) {
             Log.i(TAG,"APPNAME SET");
             appname = "IPVSWeather";
+            //appname = "MYTEMP";
             DispGUI(DisplayStates.SCANNING_WEATHER);
 
         } else {
@@ -130,13 +138,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 LeftButtonState = ButtonStates.SCAN_WEATHER;
                 RightButtonState = ButtonStates.SCAN_FAN;
                 DownButtonState = ButtonStates.CONNECT;
+                bReadTemprature = false;
+                bNotify= false;
+                strHumidityVal = "N/A";
+                strTempVal = "N/A";
 
                 LeftButton.setVisibility(View.VISIBLE);
                 RightButton.setVisibility(View.VISIBLE);
+                DownButton.setVisibility(View.INVISIBLE);
                 FanIntensity.setVisibility(View.INVISIBLE);
                 FanIntensityText.setVisibility(View.INVISIBLE);
 
-                DispText.setText("");
+                setText(DispText,"");
                 DownButton.setText("Connect");
                 LeftButton.setText("SCAN TEMP");
                 RightButton.setText("SCAN FAN");
@@ -181,8 +194,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 RightButtonState = ButtonStates.READ_HUMIDITY;
                 DownButtonState = ButtonStates.DISCONNECT;
 
-                LeftButton.setText("T_Update");
-                RightButton.setText("H_Update");
+                LeftButton.setText("T_Read");
+                RightButton.setText("H_Read");
                 RightButton.setVisibility(View.VISIBLE);
                 LeftButton.setVisibility(View.VISIBLE);
                 DownButton.setText("Disconnect");
@@ -197,7 +210,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 LeftButton.setVisibility(View.VISIBLE);
                 RightButton.setVisibility(View.VISIBLE);
                 DownButton.setText("Disconnect");
+                break;
+            case NOTIFY_WEATHER:
+                LeftButtonState = ButtonStates.NOTIFY_TEMPERATURE;
+                RightButtonState = ButtonStates.NOTIFY_HUMIDITY;
+                DownButtonState = ButtonStates.DISCONNECT;
 
+                LeftButton.setText("T_Notify");
+                RightButton.setText("H_Notify");
+                RightButton.setVisibility(View.VISIBLE);
+                LeftButton.setVisibility(View.VISIBLE);
+                DownButton.setText("Disconnect");
                 break;
         }
     }
@@ -272,6 +295,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         mygatt= MyDevice.connectGatt(MainActivity.this,false,GattCallback);
                         //mygatt.readCharacteristic(Temp_characteristic);
                         break;
+                    case NOTIFY_TEMPERATURE:
+                        bNotify = true;
+                        bReadTemprature = true;
+                        mygatt= MyDevice.connectGatt(MainActivity.this,false,GattCallback);
+
+                        break;
                 }
                 break;
             case R.id.RightButton:
@@ -285,6 +314,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         mygatt= MyDevice.connectGatt(MainActivity.this,false,GattCallback);
                         //mygatt.readCharacteristic(Temp_characteristic);
                         break;
+                    case NOTIFY_WEATHER:
+                        DispGUI(DisplayStates.NOTIFY_WEATHER);
+                        break;
+                    case NOTIFY_HUMIDITY:
+                        bNotify = true;
+                        bReadTemprature = false;
+                        mygatt= MyDevice.connectGatt(MainActivity.this,false,GattCallback);
+
+                        break;
                 }
                 break;
             case R.id.DownButton:
@@ -297,7 +335,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         break;
                     case DISCONNECT:
-                        //mygatt.disconnect();
+
+                        if (mygatt!=null)
+                            mygatt.disconnect();
+
+                        bNotify = false;
                         DispGUI(DisplayStates.INIT);
                         break;
                 }
@@ -315,13 +357,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
 
-            //    Log.i(TAG, "Called");
+            Log.i(TAG, "SCANcallback Called");
 
             if (result.getScanRecord() != null) {
+                DispText.setText("Scanning .. ");
+
+
 
                 //    Log.i(TAG, "inside If");
 
                 if (result.getScanRecord().getDeviceName() != null) {
+                    DispText.setText(DispText.getText() +"\n new Record Found with name " + result.getScanRecord().getDeviceName());
 
                     if (result.getScanRecord().getDeviceName().equals(appname)) {
 
@@ -349,47 +395,70 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private BluetoothGattCallback GattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            Log.i(TAG, " onConnectionStateChange: " + newState );
+            Log.i(TAG, " onConnectionStateChange:STATE =2 " + newState );
             if (newState == BluetoothProfile.STATE_CONNECTED){
-                Log.i(TAG, " onConnectionStateChange: " + status );
+                Log.i(TAG, " onConnectionStateChange: STATUS= 0 " + status );
                 //DispText.setText("GATT!!");
                 setText(DispText,"Server Connected \n");
                 //ScanRes.setText(ScanRes.getText()+ "state_connected wait for service discovery \n");
                 gatt.discoverServices();
             }
+            else if (newState == BluetoothProfile.STATE_DISCONNECTED){
+                //DispGUI(DisplayStates.INIT);
+                Log.i(TAG, " STATE_DISCONNECTED " + newState );
+//                if (bNotify)
+//                    setText(DispText,"Connection Dropped...\n");
+                //if (mygatt!=null)
+                   // mygatt.connect();
+            }
+
         }
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status){
 
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                    //ScanRes.setText(ScanRes.getText()+ "service discovered  "+ status +"\n");
+                //ScanRes.setText(ScanRes.getText()+ "service discovered  "+ status +"\n");
                 Log.i(TAG, "onServicesDiscovered received1: " + status );
                 setText(DispText,"");
 
                 if (gatt.getService(WeatherServiceUUID) != null )
                 {
+                    Temp_characteristic =  gatt.getService(WeatherServiceUUID).getCharacteristic(Temperature_Measurement);
+                    Humidity_characteristic =  gatt.getService(WeatherServiceUUID).getCharacteristic(Humidity_Measurement);
 
-                    if (bReadTemprature) {
-                        Temp_characteristic =  gatt.getService(WeatherServiceUUID).getCharacteristic(Temperature_Measurement);
-                        mygatt.readCharacteristic(Temp_characteristic);
+                    if(bNotify)
+                    {
+                        if (bReadTemprature)
+                        {
+                            mygatt.readCharacteristic(Temp_characteristic);
+                            BluetoothGattDescriptor descriptor = Temp_characteristic.getDescriptor(Notify_Descriptor_UUID);
+                            descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
+                            mygatt.writeDescriptor(descriptor);
+                            mygatt.setCharacteristicNotification(Temp_characteristic, true);
+                        }
+                        else{
+                            mygatt.readCharacteristic(Humidity_characteristic);
+                            BluetoothGattDescriptor descriptor = Humidity_characteristic.getDescriptor(Notify_Descriptor_UUID);
+                            descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
+                            mygatt.writeDescriptor(descriptor);
+                            mygatt.setCharacteristicNotification(Humidity_characteristic, true);
 
-                    } else {
-                        Humidity_characteristic =  gatt.getService(WeatherServiceUUID).getCharacteristic(Humidity_Measurement);
-                        mygatt.readCharacteristic(Humidity_characteristic);
+                        }
+
+                    }else {
+                        if (bReadTemprature) {
+                            mygatt.readCharacteristic(Temp_characteristic);
+
+                        } else {
+                            mygatt.readCharacteristic(Humidity_characteristic);
+                        }
                     }
-
-
-                    //                        if(isNotify == true)
-//                        {
-//                            gatt.setCharacteristicNotification(characteristic1, true);
-//                            //gatt.setCharacteristicNotification(characteristic2, true);
-//                        }
 
                 }
                 else if (gatt.getService(fanServiceuuid) != null){
                     BluetoothGattCharacteristic characteristic =  gatt.getService(fanServiceuuid).getCharacteristic(Fan_Intensity);
-                  //  characteristic.setValue(0,BluetoothGattCharacteristic.FORMAT_UINT16,0);
+                    //  characteristic.setValue(0,BluetoothGattCharacteristic.FORMAT_UINT16,0);
                     Log.i(TAG, "FanIntensity test : " + FanIntensity.getText());
                     Log.i(TAG, "FanIntensity test : " + Integer.parseInt(FanIntensity.getText().toString()));
 
@@ -427,22 +496,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                    // do nothing
 //                }
 
-            if (bReadTemprature)
+            //if (bReadTemprature)
+            if (characteristic.getUuid().equals(Temperature_Measurement))
             {
-                int temperature_data = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT16,1);
-                strTempVal = String.valueOf ((float)(temperature_data/100));
-                setText(DispText, strTempVal + "°C "+strHumidityVal + "% \n");
-            }else
+                Log.i(TAG,characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT16,1).toString());
+                float temperature_data = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT16,1);
+                float temerature = temperature_data*(float)0.01;
+                strTempVal = Float.toString(temerature);
+                setText(DispText, "Temperature = " + strTempVal + "°C \n"+"Humidity = "+strHumidityVal + "% \n");
+            }else if (characteristic.getUuid().equals(Humidity_Measurement))
             {
+                Log.i(TAG,characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16,0).toString());
                 float percentage = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16,0)*(float)(0.01);
                 strHumidityVal = Float.toString(percentage);;
-                setText(DispText, strTempVal + "°C "+strHumidityVal + "% \n");
+                setText(DispText, "Temperature = " + strTempVal + "°C \n"+"Humidity = "+strHumidityVal + "% \n");
+            }
+            else
+            {
+                Log.i(TAG,"unknow characteristic call");
             }
 
+            if (!bNotify)
+            {
+                mygatt.disconnect();
+                mygatt = null;
+            }
 
-
-
-            mygatt.disconnect();
         }
 
         @Override
@@ -450,16 +529,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //    super.onCharacteristicWrite(gatt, characteristic, status);
 
             mygatt.disconnect();
+
+            mygatt = null;
         }
 
-        //    @Override
-        //    public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-        //  gatt.readCharacteristic(characteristic);
-        //ScanRes.setText(ScanRes.getText()+ "get value   " + characteristic.getValue());
-        //}
+        @Override
+        public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+            Log.i(TAG , "onCharacteristicChanged : entered");
 
+            if (characteristic.getUuid().equals(Temperature_Measurement))
+            {
+                Log.i(TAG,characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT16,1).toString());
+                float temperature_data = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT16,1);
+                float temerature = temperature_data*(float) 0.01;
+                strTempVal = Float.toString(temerature);
+                setText(DispText, "Temperature = " + strTempVal + "°C \n"+"Humidity = "+strHumidityVal + "% \n");
+            }else if (characteristic.getUuid().equals(Humidity_Measurement))
+            {
+                Log.i(TAG,characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16,0).toString());
+                float percentage = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16,0)*(float)(0.01);
+                strHumidityVal = Float.toString(percentage);;
+                setText(DispText, "Temperature = " + strTempVal + "°C \n"+"Humidity = "+strHumidityVal + "% \n");
+            }
+            else
+            {
+                Log.i(TAG,"unknow characteristic call");
+            }
+        }
     };
-
-
 
 }
