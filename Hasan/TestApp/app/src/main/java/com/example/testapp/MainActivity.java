@@ -335,11 +335,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         break;
                     case DISCONNECT:
-
                         if (mygatt!=null)
-                            mygatt.disconnect();
+                        {
+                            if (bNotify) {
 
-                        bNotify = false;
+                            if (bReadTemprature)
+                            {
+                                BluetoothGattDescriptor descriptor = Temp_characteristic.getDescriptor(Notify_Descriptor_UUID);
+                                descriptor.setValue(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
+                                mygatt.writeDescriptor(descriptor);
+                                mygatt.setCharacteristicNotification(Temp_characteristic, true);
+                            } else
+                            {
+                                BluetoothGattDescriptor descriptor = Humidity_characteristic.getDescriptor(Notify_Descriptor_UUID);
+                                descriptor.setValue(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
+                                mygatt.writeDescriptor(descriptor);
+                                mygatt.setCharacteristicNotification(Humidity_characteristic, true);
+                            }
+                            bNotify = false;
+                        }
+                           mygatt.disconnect();
+                        }
+
                         DispGUI(DisplayStates.INIT);
                         break;
                 }
@@ -409,7 +426,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                if (bNotify)
 //                    setText(DispText,"Connection Dropped...\n");
                 //if (mygatt!=null)
-                   // mygatt.connect();
+                // mygatt.connect();
             }
 
         }
@@ -431,16 +448,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     {
                         if (bReadTemprature)
                         {
-                            mygatt.readCharacteristic(Temp_characteristic);
+                            // mygatt.readCharacteristic(Temp_characteristic);
                             BluetoothGattDescriptor descriptor = Temp_characteristic.getDescriptor(Notify_Descriptor_UUID);
-                            descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
+                            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
                             mygatt.writeDescriptor(descriptor);
                             mygatt.setCharacteristicNotification(Temp_characteristic, true);
                         }
                         else{
-                            mygatt.readCharacteristic(Humidity_characteristic);
+                            // mygatt.readCharacteristic(Humidity_characteristic);
                             BluetoothGattDescriptor descriptor = Humidity_characteristic.getDescriptor(Notify_Descriptor_UUID);
-                            descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
+                            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
                             mygatt.writeDescriptor(descriptor);
                             mygatt.setCharacteristicNotification(Humidity_characteristic, true);
 
