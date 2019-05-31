@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                    LeScanner.stopScan(scanCallback);
+                LeScanner.stopScan(scanCallback);
             }
         }, SCAN_PERIOD);
 
