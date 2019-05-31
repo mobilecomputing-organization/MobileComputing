@@ -11,6 +11,8 @@ import android.location.LocationProvider;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     Location location; // location
@@ -23,6 +25,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Button StartServiceButton = findViewById(R.id.startServiceButton);
+        Button exitButton = findViewById(R.id.stopServiceButton);
+        Button beaconText = findViewById(R.id.exitButton);
+        Button updateValueButton = findViewById(R.id.updateValueButton);
+        TextView erageSpeedTextView = findViewById(R.id.AverageSpeedTextView);
+        TextView distanceTextView = findViewById(R.id.distanceTextView);
+        TextView latitudeTextView = findViewById(R.id.latitudeTextView);
+        TextView longitudeTextView = findViewById(R.id.longitudeTextView);
 
 
         LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
