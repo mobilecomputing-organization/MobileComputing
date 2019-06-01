@@ -41,22 +41,15 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final String FILE_NAME = "sample.gpx";
 
-    double latitude;
-    double longitude;
-    double distance = 0;
-    double averageSpeed = 0;
+    Location location;
     float minDistance = 10;
     long interval = 1;
     private LocationManager locationManager;
     private LocationListener listener;
-    Button StartServiceButton ;
-    Button exitButton;
-    Button beaconText;
-    Button updateValueButton;
-    TextView AverageSpeedTextView;
-    TextView distanceTextView;
-    TextView latitudeTextView;
-    TextView longitudeTextView;
+    private TextView AverageSpeedTextView;
+    private TextView distanceTextView;
+    private TextView latitudeTextView;
+    private TextView longitudeTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +57,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //initialize ui
-        StartServiceButton = findViewById(R.id.startServiceButton);
-        exitButton = findViewById(R.id.stopServiceButton);
-        beaconText = findViewById(R.id.exitButton);
-        updateValueButton = findViewById(R.id.updateValueButton);
         AverageSpeedTextView = findViewById(R.id.AverageSpeedTextView);
         distanceTextView = findViewById(R.id.distanceTextView);
         latitudeTextView = findViewById(R.id.latitudeTextView);
@@ -77,10 +66,9 @@ public class MainActivity extends AppCompatActivity {
 
             listener = new LocationListener() {
             @Override
-            public void onLocationChanged(Location location) {
-                Log.i(TAG, " onLocationChanged: "+location.toString());
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
+            public void onLocationChanged(Location loc) {
+                Log.i(TAG, " onLocationChanged: "+loc.toString());
+                location = loc;
                 save(location.toString());
             }
 
@@ -146,12 +134,12 @@ public class MainActivity extends AppCompatActivity {
 
             // lat element
             Element lat = document.createElement("lat");
-            lat.appendChild(document.createTextNode("James"));
+            lat.appendChild(document.createTextNode(""));
             wpt.appendChild(lat);
 
             // lon element
             Element lon = document.createElement("lon");
-            lon.appendChild(document.createTextNode("Harley"));
+            lon.appendChild(document.createTextNode(""));
             wpt.appendChild(lon);
 
             // ele element
@@ -205,10 +193,12 @@ public class MainActivity extends AppCompatActivity {
     }
     public void updateValue(View v){
         Log.i(TAG, " updateValue: ");
-        AverageSpeedTextView.setText(Double.toString(getAverageSpeed()));
-        distanceTextView.setText(Double.toString(getDistance()));
-        latitudeTextView.setText(Double.toString(latitude));
-        longitudeTextView.setText(Double.toString(longitude));
+        if(location!= null) {
+            AverageSpeedTextView.setText(Double.toString(location.getSpeed()));
+            distanceTextView.setText(Double.toString(location.getAltitude()));
+            latitudeTextView.setText(Double.toString(location.getLatitude()));
+            longitudeTextView.setText(Double.toString(location.getLongitude()));
+        }
     }
     public void exit(View v){
         Log.i(TAG, " exit: ");
@@ -216,7 +206,5 @@ public class MainActivity extends AppCompatActivity {
         System.exit(0);
     }
 
-    public double getAverageSpeed(){return  averageSpeed;}//Todo
-    public double getDistance(){return  distance;}//Todo
     //Todo: copy and check the gpx file
 }
