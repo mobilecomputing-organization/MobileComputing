@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView ScanRes;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,10 +82,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //GUI variables
         // TODO// Check whether to declare variables up
-        ScanTemp = (Button) findViewById(R.id.ScanTemperature);
-        ScanLight = (Button) findViewById(R.id.ScanLight);
-        ConnectBtn = (Button) findViewById(R.id.Connect);
-        ScanRes = (TextView) findViewById(R.id.ScanRes);
+        ScanTemp = findViewById(R.id.ScanTemperature);
+        ScanLight = findViewById(R.id.ScanLight);
+        ConnectBtn = findViewById(R.id.Connect);
+        ScanRes = findViewById(R.id.ScanRes);
 
         ScanTemp.setOnClickListener(this);
         ScanLight.setOnClickListener(this);
@@ -97,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mHandler = new Handler();
 
+        // ///////
         // Initializes Bluetooth adapter
         final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
+        // //////////
 
         GattCallback = new BluetoothGattCallback() {
             @Override
@@ -155,35 +156,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         BluetoothGattCharacteristic characteristic =  gatt.getService(fanServiceuuid).getCharacteristic(Fan_Intensity);
 
-
-
                         Log.i(TAG, "onServicesDiscovered no null after: " + characteristic.getUuid() );
 
                         //ScanRes.setText(ScanRes.getText() + characteristic.getUuid().toString() + " \n " );
                         characteristic.setValue(65000,BluetoothGattCharacteristic.FORMAT_UINT16,0);
 
                         gatt.writeCharacteristic(characteristic);
-
                     }
-
                 }
-
                 else {
                     Log.i(TAG, "onServicesDiscovered received2: " + status );
                 }
-
-
-
                 //BluetoothGattService sercharatersitic =  gatt.getService(UUID.fromString("0000fff1-0000-1000-8000-00805f9b34fb"));
-
-
                 //Temperaturedata.setText(Temperaturedata.getText()+ "character   " + characteristic.getService().getUuid().toString());
-
             }
 
             @Override
             public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-
                 super.onCharacteristicRead(gatt, characteristic, status);
                 //ScanRes.setText(ScanRes.getText()+ "\n readchar   " + characteristic.getValue());
                 Log.i(TAG, "onCharacteristicRead outside IF : " + status + characteristic.getUuid());
@@ -215,21 +204,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
                 super.onCharacteristicWrite(gatt, characteristic, status);
-
             }
 
             @Override
             public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-
                 gatt.readCharacteristic(characteristic);
-
                 //ScanRes.setText(ScanRes.getText()+ "get value   " + characteristic.getValue());
             }
-
-
         };
-
-
         // Device scan callback.
         scanCallback = new ScanCallback() {
             @Override
@@ -311,19 +293,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     // ConnectBtn.setTextColor(Color.WHITE);
 
                     mygatt= MyDevice.connectGatt(v.getContext(),false,GattCallback);
-
-
                 }
                 else if (mystate == currentstate.FAN_Write){
                     mygatt= MyDevice.connectGatt(v.getContext(),false,GattCallback);
-
                 }
-
-
-
                 break;
-            case R.id.ScanLight: // also notify button
 
+            case R.id.ScanLight: // also notify button
                 if(mystate == currentstate.SCANNING) {
                     ConnectBtn.setVisibility(View.INVISIBLE);
                     appname = "IPVS-LIGHT";  //todo with mac adress > F8:20:74:F7:2B:82
@@ -353,7 +329,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     ScanTemp.setClickable(false); // Disable clicking
                     ScanLight.setClickable(false);
                     mygatt= MyDevice.connectGatt(v.getContext(),false,GattCallback);
-
                 }
                 else if (mystate == currentstate.FAN_Write)
                 {
