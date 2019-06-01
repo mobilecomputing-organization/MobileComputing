@@ -69,7 +69,8 @@ public class MainActivity extends AppCompatActivity {
             public void onLocationChanged(Location loc) {
                 Log.i(TAG, " onLocationChanged: "+loc.toString());
                 location = loc;
-                save(location.toString());
+                //save(location.toString());
+                convertGPX();
             }
 
             @Override
@@ -134,22 +135,22 @@ public class MainActivity extends AppCompatActivity {
 
             // lat element
             Element lat = document.createElement("lat");
-            lat.appendChild(document.createTextNode(""));
+            lat.appendChild(document.createTextNode(Double.toString(location.getLatitude())));
             wpt.appendChild(lat);
 
             // lon element
             Element lon = document.createElement("lon");
-            lon.appendChild(document.createTextNode(""));
+            lon.appendChild(document.createTextNode(Double.toString(location.getLatitude())));
             wpt.appendChild(lon);
 
             // ele element
             Element ele = document.createElement("ele");
-            ele.appendChild(document.createTextNode(""));
+            ele.appendChild(document.createTextNode(Double.toString(location.getAltitude())));
             wpt.appendChild(ele);
 
             // time elements
             Element time = document.createElement("time");
-            time.appendChild(document.createTextNode("0:0:0"));
+            time.appendChild(document.createTextNode(Double.toString(location.getTime())));
             wpt.appendChild(time);
 
             // create the xml file
@@ -167,7 +168,8 @@ public class MainActivity extends AppCompatActivity {
             // You can use that for debugging
             transformer.transform(domSource, streamResult);
 
-            System.out.println("Done creating XML File");
+            System.out.println(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) +
+                    File.separator + FILE_NAME+"Done creating XML File");
 
         } catch (ParserConfigurationException pce) {
             pce.printStackTrace();
