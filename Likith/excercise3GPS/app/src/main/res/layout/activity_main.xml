@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/longitudeTextView"
+        android:layout_width="161dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="176dp"
+        android:layout_marginTop="123dp"
+        android:layout_marginEnd="74dp"
+        android:layout_marginBottom="583dp"
+        android:text="@string/zero"
+        app:layout_constraintBaseline_toBaselineOf="@+id/Longitude"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/AverageSpeedTextView"
+        android:layout_width="169dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="176dp"
+        android:layout_marginTop="248dp"
+        android:layout_marginEnd="66dp"
+        android:layout_marginBottom="455dp"
+        android:text="@string/zero"
+        app:layout_constraintBaseline_toBaselineOf="@+id/averageSpeed"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/latitudeTextView"
+        android:layout_width="161dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="176dp"
+        android:layout_marginTop="65dp"
+        android:layout_marginEnd="74dp"
+        android:layout_marginBottom="641dp"
+        android:text="@string/zero"
+        app:layout_constraintBaseline_toBaselineOf="@+id/Latitude"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/stopServiceButton"
+        android:layout_width="136dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="421dp"
+        android:layout_marginEnd="247dp"
+        android:layout_marginBottom="262dp"
+        android:onClick="stopService"
+        android:text="@string/stop_service"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/startServiceButton"
+        android:layout_width="138dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="360dp"
+        android:layout_marginEnd="247dp"
+        android:layout_marginBottom="322dp"
+        android:onClick="startService"
+        android:text="@string/start_service"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/updateValueButton"
+        android:layout_width="134dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="486dp"
+        android:layout_marginEnd="250dp"
+        android:layout_marginBottom="197dp"
+        android:onClick="updateValue"
+        android:text="@string/update_value"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/exitButton"
+        android:layout_width="132dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="548dp"
+        android:layout_marginEnd="249dp"
+        android:layout_marginBottom="140dp"
+        android:onClick="exit"
+        android:text="@string/exit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/distanceTextView"
+        android:layout_width="161dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="176dp"
+        android:layout_marginTop="184dp"
+        android:layout_marginEnd="74dp"
+        android:layout_marginBottom="522dp"
+        android:text="@string/zero"
+        app:layout_constraintBaseline_toBaselineOf="@+id/Distance"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/Latitude"
+        android:layout_width="76dp"
+        android:layout_height="21dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="65dp"
+        android:layout_marginEnd="296dp"
+        android:layout_marginBottom="645dp"
+        android:text="@string/latitude"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.967"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/Longitude"
+        android:layout_width="79dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="294dp"
+        android:layout_marginBottom="44dp"
+        android:text="@string/longitude"
+        app:layout_constraintBottom_toTopOf="@+id/Distance"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Latitude" />
+
+    <TextView
+        android:id="@+id/Distance"
+        android:layout_width="100dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="272dp"
+        android:layout_marginBottom="42dp"
+        android:text="@string/distance"
+        app:layout_constraintBottom_toTopOf="@+id/averageSpeed"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Longitude" />
+
+    <TextView
+        android:id="@+id/averageSpeed"
+        android:layout_width="101dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="27dp"
+        android:layout_marginEnd="272dp"
+        android:text="@string/average_speed"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Distance" />
+
+</android.support.constraint.ConstraintLayout>

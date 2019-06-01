@@ -31,11 +31,13 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:autoText="false"
-        app:autoSizeTextType="uniform"
+        android:textSize="24sp"
+        app:autoSizeTextType="none"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/FanIntensityText"
+        app:layout_constraintVertical_bias="0.297" />
 
     <Button
         android:id="@+id/RightButton"
@@ -67,5 +69,37 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.951" />
+
+    <EditText
+        android:id="@+id/FanIntensity"
+        android:layout_width="231dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="8dp"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        app:layout_constraintBottom_toTopOf="@+id/Disp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/RightButton"
+        app:layout_constraintVertical_bias="0.113" />
+
+    <TextView
+        android:id="@+id/FanIntensityText"
+        android:layout_width="136dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Enter the Number"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/FanIntensity"
+        app:layout_constraintHorizontal_bias="0.333"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LeftButton"
+        app:layout_constraintVertical_bias="0.023" />
 
 </android.support.constraint.ConstraintLayout>
