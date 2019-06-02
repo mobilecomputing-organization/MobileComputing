@@ -66,12 +66,11 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                     // Start Service explicitly
                     startService(locService);
                     ServiceState = ServiceState.STARTED;
-                }
-                else
-                {
+                } else {
                     Log.i(TAG,
                             " Ignoring a trigger to start a service already in STARTED state");
                 }
+            }
         });
 
         /* Definition for On click listener for stopServiceButton button */
