@@ -33,8 +33,11 @@ public class ServiceLocation extends Service {
 
     private ServiceLocationImpl locationService_Ibinder;
     private Location location;
+    Location previousLocation = null;
     float minDistance = 10;
     long interval = 1;
+    double totalDistance = 0;
+    double averageSpeed = 0;
     private LocationManager locationManager;
     private LocationListener listener;
 
@@ -78,8 +81,13 @@ public class ServiceLocation extends Service {
             @Override
             public void onLocationChanged(Location dynloc) {
                 Log.i(TAG, " onLocationChanged: "+dynloc.toString());
+                if(previousLocation == null)
+                    previousLocation = dynloc;
+                else
+                    previousLocation = location;
                 location = dynloc;
-                //save(location.toString());
+                calculateDistance();
+                calculateAverageSpeed();
                 convertGPX();
             }
 
@@ -180,5 +188,30 @@ public class ServiceLocation extends Service {
         } catch (TransformerException tfe) {
             tfe.printStackTrace();
         }
+    }
+
+    private void calculateDistance() {
+        double theta = previousLocation.getLongitude() - location.getLongitude();
+        double distance = Math.sin(deg2rad(previousLocation.getLatitude()))
+                * Math.sin(deg2rad(location.getLatitude()))
+                + Math.cos(deg2rad(previousLocation.getLatitude()))
+                * Math.cos(deg2rad(location.getLatitude()))
+                * Math.cos(deg2rad(theta));
+        distance = Math.acos(distance);
+        distance = rad2deg(distance);
+        distance = distance * 60 * 1.1515;
+        totalDistance = totalDistance + distance;
+    }
+
+    private double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    private double rad2deg(double rad) {
+        return (rad * 180.0 / Math.PI);
+    }
+    private void calculateAverageSpeed() {
+        if(averageSpeed == 0) averageSpeed = location.getSpeed();
+        averageSpeed = (averageSpeed + location.getSpeed())*0.5;
     }
 }
