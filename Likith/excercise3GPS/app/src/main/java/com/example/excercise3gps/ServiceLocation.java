@@ -117,7 +117,7 @@ public class ServiceLocation extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        locationmanager.removeUpdates(listener);
+        locationManager.removeUpdates(listener);
         // Write file to memory
         return super.onUnbind(intent);
     }
