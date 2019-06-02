@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
                     // Start Service explicitly
                     startService(locService);
+                    bindService(locService, MainActivity.this , BIND_AUTO_CREATE);
                     ServiceState = ServiceState.STARTED;
                 } else {
                     Log.i(TAG,
