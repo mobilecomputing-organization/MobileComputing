@@ -52,11 +52,11 @@ public class ServiceLocation extends Service {
         }
 
         public double rpc_getDistance() {
-            return (location.getLatitude());
+            return (totalDistance);
         }
 
         public double rpc_getAverageSpeed() {
-            return (location.getLatitude());
+            return (averageSpeed);
         }
     }
 
@@ -66,16 +66,6 @@ public class ServiceLocation extends Service {
         locationService_Ibinder = new ServiceLocationImpl();
 
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-
-        try {
-            locationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER,   // use GPS device
-                    interval,                       // hint for notification interval
-                    minDistance,                    // hint for minimum position distance
-                    listener);                      // callback receiver
-        }
-        catch (SecurityException e){
-        }
 
         listener = new LocationListener() {
             @Override
@@ -106,6 +96,18 @@ public class ServiceLocation extends Service {
                 Log.i(TAG, " onProviderDisabled: "+s);
             }
         };
+
+        try {
+            locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,   // use GPS device
+                    interval,                       // hint for notification interval
+                    minDistance,                    // hint for minimum position distance
+                    listener);                      // callback receiver
+        }
+        catch (SecurityException e){
+        }
+
+
     }
 
     @Override
