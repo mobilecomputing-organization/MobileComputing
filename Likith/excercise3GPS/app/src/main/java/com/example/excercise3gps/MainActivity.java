@@ -42,8 +42,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String FILE_NAME = "sample.gpx";
 
     Location location;
+    Location previousLocation = null;
     float minDistance = 10;
     long interval = 1;
+    double totalDistance = 0;
+    double averageSpeed = 0;
     private LocationManager locationManager;
     private LocationListener listener;
     private TextView AverageSpeedTextView;
@@ -68,8 +71,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onLocationChanged(Location loc) {
                 Log.i(TAG, " onLocationChanged: "+loc.toString());
+                if(previousLocation == null)
+                    previousLocation = loc;
+                else
+                    previousLocation = location;
                 location = loc;
-                //save(location.toString());
+                calculateDistance();
+                calculateAverageSpeed();
                 convertGPX();
             }
 
@@ -120,12 +128,19 @@ public class MainActivity extends AppCompatActivity {
             DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
 
             DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-
-            Document document = documentBuilder.newDocument();
-
+            Document document;
+            Element root;
+            //if(fileExist) {
+                document = documentBuilder.newDocument();
+                root = document.createElement("gpx");
+                document.appendChild(root);
+            //}
+/*            try {
+                Document document = documentBuilder.parse("server.xml");
+            } catch (Io e){}*/
+            root = document.getDocumentElement();
             // root element
-            Element root = document.createElement("gpx");
-            document.appendChild(root);
+
 
             // wpt element
             Element wpt = document.createElement("wpt");
@@ -140,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
 
             // lon element
             Element lon = document.createElement("lon");
-            lon.appendChild(document.createTextNode(Double.toString(location.getLatitude())));
+            lon.appendChild(document.createTextNode(Double.toString(location.getLongitude())));
             wpt.appendChild(lon);
 
             // ele element
@@ -150,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
             // time elements
             Element time = document.createElement("time");
-            time.appendChild(document.createTextNode(Double.toString(location.getTime())));
+            time.appendChild(document.createTextNode(new Date(location.getTime()).toString()));
             wpt.appendChild(time);
 
             // create the xml file
@@ -196,8 +211,8 @@ public class MainActivity extends AppCompatActivity {
     public void updateValue(View v){
         Log.i(TAG, " updateValue: ");
         if(location!= null) {
-            AverageSpeedTextView.setText(Double.toString(location.getSpeed()));
-            distanceTextView.setText(Double.toString(location.getAltitude()));
+            AverageSpeedTextView.setText(Double.toString(averageSpeed));
+            distanceTextView.setText(Double.toString(totalDistance));
             latitudeTextView.setText(Double.toString(location.getLatitude()));
             longitudeTextView.setText(Double.toString(location.getLongitude()));
         }
@@ -209,4 +224,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Todo: copy and check the gpx file
+    //private double getDistance(double lat1, double lon1, double lat2, double lon2) {
+    private void calculateDistance() {
+        double theta = previousLocation.getLongitude() - location.getLongitude();
+        double distance = Math.sin(deg2rad(previousLocation.getLatitude()))
+                * Math.sin(deg2rad(location.getLatitude()))
+                + Math.cos(deg2rad(previousLocation.getLatitude()))
+                * Math.cos(deg2rad(location.getLatitude()))
+                * Math.cos(deg2rad(theta));
+        distance = Math.acos(distance);
+        distance = rad2deg(distance);
+        distance = distance * 60 * 1.1515;
+        totalDistance = totalDistance + distance;
+    }
+
+    private double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    private double rad2deg(double rad) {
+        return (rad * 180.0 / Math.PI);
+    }
+    private void calculateAverageSpeed() {
+        if(averageSpeed == 0) averageSpeed = location.getSpeed();
+        averageSpeed = (averageSpeed + location.getSpeed())*0.5;
+    }
 }
