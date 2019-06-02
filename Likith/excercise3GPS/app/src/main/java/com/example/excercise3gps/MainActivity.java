@@ -1,212 +1,163 @@
 package com.example.excercise3gps;
 
+import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.location.LocationProvider;
-import android.os.Environment;
-import android.provider.Settings;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+enum ServiceStates{
+    STARTED,
+    STOPPED
+}
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ServiceConnection {
     private static final String TAG = "MainActivity";
-    private static final String FILE_NAME = "sample.gpx";
 
-    Location location;
-    float minDistance = 10;
-    long interval = 1;
-    private LocationManager locationManager;
-    private LocationListener listener;
-    private TextView AverageSpeedTextView;
+    private TextView averageSpeedTextView;
     private TextView distanceTextView;
     private TextView latitudeTextView;
     private TextView longitudeTextView;
+
+    private ServiceStates ServiceState = ServiceStates.STOPPED;
+    private Intent locService;
+    private IServiceLocation serviceLocationProxy = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //initialize ui
-        AverageSpeedTextView = findViewById(R.id.AverageSpeedTextView);
+        // Handle for text views
+        averageSpeedTextView = findViewById(R.id.averageSpeedTextView);
         distanceTextView = findViewById(R.id.distanceTextView);
         latitudeTextView = findViewById(R.id.latitudeTextView);
         longitudeTextView = findViewById(R.id.longitudeTextView);
 
-        locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        // Handle for Buttons
+        Button startServiceButton = findViewById(R.id.startServiceButton);
+        Button stopServiceButton = findViewById(R.id.stopServiceButton);
+        Button updateValueButton = findViewById(R.id.updateValueButton);
+        Button exitButton = findViewById(R.id.exitButton);
 
-            listener = new LocationListener() {
+        // Create new intent, to start and stop the service.
+        locService = new Intent(this, ServiceLocation.class);
+
+        /* Definition for On click listener for startServiceButton button */
+        startServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onLocationChanged(Location loc) {
-                Log.i(TAG, " onLocationChanged: "+loc.toString());
-                location = loc;
-                //save(location.toString());
-                convertGPX();
-            }
+            public void onClick(View v) {
 
+                // Check if service already active. Only one service to run at a given point of time.
+                if (ServiceState == ServiceStates.STOPPED) {
+
+                    // Start Service explicitly
+                    startService(locService);
+                    ServiceState = ServiceState.STARTED;
+                }
+                else
+                {
+                    Log.i(TAG,
+                            " Ignoring a trigger to start a service already in STARTED state");
+                }
+            }
+        });
+
+        /* Definition for On click listener for stopServiceButton button */
+        stopServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-                Log.i(TAG, " onStatusChanged: "+s);
-            }
+            public void onClick(View v) {
+                // Check if service already active. Only one service to run at a given point of time.
+                if (ServiceState == ServiceStates.STARTED) {
 
+                    // Stop Service explicitly
+                    stopService(locService);
+                    ServiceState = ServiceState.STOPPED;
+                }
+                else
+                {
+                    Log.i(TAG,
+                            " Ignoring a trigger to stop a service already in STOPPED state");
+                }
+            }
+        });
+
+        /* Definition for On click listener for updateValueButton button */
+        updateValueButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onProviderEnabled(String s) {
-                Log.i(TAG, " onProviderEnabled: " +s);
+            public void onClick(View v) {
+                // Check if service already active. Only one service to run at a given point of time.
+                if (ServiceState == ServiceStates.STARTED) {
+                    try {
+                        latitudeTextView.setText(Double.toString(serviceLocationProxy.rpc_getLatitude()));
+                        longitudeTextView.setText(Double.toString(serviceLocationProxy.rpc_getLongitude()));
+                        averageSpeedTextView.setText(Double.toString(serviceLocationProxy.rpc_getDistance()));
+                        distanceTextView.setText(Double.toString(serviceLocationProxy.rpc_getAverageSpeed()));
+                    }
+                    catch (RemoteException ex)
+                    {
+                        Log.i(TAG, " RemoteException thrown.");
+                        // Do nothing
+                    }
+                }
+                else
+                {
+                    Log.i(TAG, " Ignoring a trigger to Update, service not STARTED.");
+                    Toast.makeText(v.getContext(),
+                            " Ignoring a trigger to Update, service not STARTED. ",
+                            Toast.LENGTH_LONG).show();
+                }
             }
+        });
 
+        /* Definition for On click listener for exitButton button */
+        exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onProviderDisabled(String s) {
-                Log.i(TAG, " onProviderDisabled: "+s);
+            public void onClick(View v) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Exit");
+                builder.setMessage("Do you want to exit ??");
+                builder.setPositiveButton("Yes. Exit now!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Log.i(TAG, " App exiting ");
+//                        finishAffinity();
+//                        System.exit(0);
+                        finish();
+                    }
+                });
+                builder.setNegativeButton("Not now", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
-        };
-    }
-    void save(String str){
-
-        //External directory path to save file
-        String folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator ;
-        OutputStream output = null;
-        try {
-            output = new FileOutputStream( folder + FILE_NAME );
-        }catch (FileNotFoundException e){
-            e.printStackTrace();
-        }
-
-        try {
-            if(output != null) output.write(str.getBytes());
-
-        }catch (IOException e){
-            e.printStackTrace();
-        }finally {
-            try {
-                if(output != null) output.close();
-            } catch (IOException e){
-                e.printStackTrace();
-            }
-        }
+        });
     }
 
-    private void convertGPX(){
-        try {
-
-            DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-
-            DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-
-            Document document = documentBuilder.newDocument();
-
-            // root element
-            Element root = document.createElement("gpx");
-            document.appendChild(root);
-
-            // wpt element
-            Element wpt = document.createElement("wpt");
-
-            root.appendChild(wpt);
-
-
-            // lat element
-            Element lat = document.createElement("lat");
-            lat.appendChild(document.createTextNode(Double.toString(location.getLatitude())));
-            wpt.appendChild(lat);
-
-            // lon element
-            Element lon = document.createElement("lon");
-            lon.appendChild(document.createTextNode(Double.toString(location.getLatitude())));
-            wpt.appendChild(lon);
-
-            // ele element
-            Element ele = document.createElement("ele");
-            ele.appendChild(document.createTextNode(Double.toString(location.getAltitude())));
-            wpt.appendChild(ele);
-
-            // time elements
-            Element time = document.createElement("time");
-            time.appendChild(document.createTextNode(Double.toString(location.getTime())));
-            wpt.appendChild(time);
-
-            // create the xml file
-            //transform the DOM Object to an XML File
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            DOMSource domSource = new DOMSource(document);
-            StreamResult streamResult = new StreamResult(
-                    new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) +
-                    File.separator + FILE_NAME));
-
-            // If you use
-            // StreamResult result = new StreamResult(System.out);
-            // the output will be pushed to the standard output ...
-            // You can use that for debugging
-            transformer.transform(domSource, streamResult);
-
-            System.out.println(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) +
-                    File.separator + FILE_NAME+"Done creating XML File");
-
-        } catch (ParserConfigurationException pce) {
-            pce.printStackTrace();
-        } catch (TransformerException tfe) {
-            tfe.printStackTrace();
-        }
+    @Override
+    public void onServiceConnected(ComponentName CompName, IBinder ibinder) {
+        serviceLocationProxy = IServiceLocation.Stub.asInterface(ibinder);
     }
 
-    public void startService(View v){
-        Log.i(TAG, " startService: ");
-        try {
-            locationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, // use GPS device
-                    interval, // hint for notification interval
-                    minDistance, // hint for minimum position distance
-                    listener); // callback receiver
-        } catch (SecurityException e){
-        }
-    }
-    public void stopService(View v){
-        Log.i(TAG, " stopService: ");
-        locationManager.removeUpdates(listener);
-    }
-    public void updateValue(View v){
-        Log.i(TAG, " updateValue: ");
-        if(location!= null) {
-            AverageSpeedTextView.setText(Double.toString(location.getSpeed()));
-            distanceTextView.setText(Double.toString(location.getAltitude()));
-            latitudeTextView.setText(Double.toString(location.getLatitude()));
-            longitudeTextView.setText(Double.toString(location.getLongitude()));
-        }
-    }
-    public void exit(View v){
-        Log.i(TAG, " exit: ");
-        finishAffinity();
-        System.exit(0);
-    }
+    @Override
+    public void onServiceDisconnected(ComponentName CompName) {
 
-    //Todo: copy and check the gpx file
+        serviceLocationProxy = null;
+    }
 }
