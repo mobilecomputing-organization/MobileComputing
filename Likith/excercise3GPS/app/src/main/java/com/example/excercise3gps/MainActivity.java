@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 if (ServiceState == ServiceStates.STOPPED) {
 
                     // Start Service explicitly
-                    startService(locService);
+                    //startService(locService);
                     bindService(locService, MainActivity.this , BIND_AUTO_CREATE);
                     ServiceState = ServiceState.STARTED;
                 } else {
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
                     // Stop Service explicitly
                     unbindService(MainActivity.this);
-                    stopService(locService);
+                    //stopService(locService);
                     ServiceState = ServiceState.STOPPED;
                 }
                 else
