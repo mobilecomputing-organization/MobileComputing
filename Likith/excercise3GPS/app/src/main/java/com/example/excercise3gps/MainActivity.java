@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 if (ServiceState == ServiceStates.STARTED) {
 
                     // Stop Service explicitly
+                    unbindService(MainActivity.this);
                     stopService(locService);
                     ServiceState = ServiceState.STOPPED;
                 }
