@@ -101,10 +101,10 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 // Check if service already active. Only one service to run at a given point of time.
                 if (ServiceState == ServiceStates.STARTED) {
                     try {
-                        latitudeTextView.setText(String.format("%.4f", serviceLocationProxy.rpc_getLatitude()));
-                        longitudeTextView.setText(String.format("%.4f", serviceLocationProxy.rpc_getLongitude()));
-                        averageSpeedTextView.setText(String.format("%.4f", serviceLocationProxy.rpc_getDistance()));
-                        distanceTextView.setText(String.format("%.4f", serviceLocationProxy.rpc_getAverageSpeed()));
+                        latitudeTextView.setText(String.format("%.6f", serviceLocationProxy.rpc_getLatitude()));
+                        longitudeTextView.setText(String.format("%.6f", serviceLocationProxy.rpc_getLongitude()));
+                        averageSpeedTextView.setText(String.format("%.4f", serviceLocationProxy.rpc_getAverageSpeed()));
+                        distanceTextView.setText(String.format("%.4f", serviceLocationProxy.rpc_getDistance()));
                     }
                     catch (RemoteException ex)
                     {
