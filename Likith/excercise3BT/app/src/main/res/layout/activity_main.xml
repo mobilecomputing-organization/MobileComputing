@@ -24,16 +24,12 @@
         android:layout_width="117dp"
         android:layout_height="72dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="44dp"
         android:text="Connect"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/beaconText"
-        app:layout_constraintVertical_bias="0.188" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/UID"
@@ -82,5 +78,19 @@
         app:layout_constraintStart_toEndOf="@+id/beaconText"
         app:layout_constraintTop_toBottomOf="@+id/URL"
         app:layout_constraintVertical_bias="0.027" />
+
+    <TextView
+        android:id="@+id/Dist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/StartButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/beaconText"
+        app:layout_constraintVertical_bias="0.632" />
 
 </android.support.constraint.ConstraintLayout>
