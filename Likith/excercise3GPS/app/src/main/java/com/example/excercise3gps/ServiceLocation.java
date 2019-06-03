@@ -34,8 +34,8 @@ public class ServiceLocation extends Service {
     private ServiceLocationImpl locationService_Ibinder;
     private Location location;
     Location previousLocation = null;
-    float minDistance = 10;
-    long interval = 1;
+    float minDistance = 0.01f;
+    long interval = 1000;
     double totalDistance = 0;
     double averageSpeed = 0;
     private LocationManager locationManager;
