@@ -30,6 +30,10 @@ public class MainActivity extends AppCompatActivity {
 
     private String appname = ""; //TODO FILL THE APP NAME //
     private TextView beaconText;
+    private TextView UIDText;
+    private TextView URLText;
+    private TextView TLMText;
+
     private Button StartButton;
 
 //    private int RcvdRssi;
@@ -52,8 +56,12 @@ public class MainActivity extends AppCompatActivity {
 
         StartButton = findViewById(R.id.StartButton);
         beaconText = findViewById(R.id.beaconText);
+        UIDText = findViewById(R.id.UID);
+        URLText = findViewById(R.id.URL);
+        TLMText = findViewById(R.id.TLM);
         handler = new Handler();
 
+        beaconText.setText("UID:\n\nURL:\n\nVoltage:\nTemp\n");
         // Initializes Bluetooth adapter
         final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
@@ -101,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG, "A WASP");
                     //TODO Display as HEX instead of INTS
                     UsefulData = Arrays.copyOfRange(BuffData, 10, 20);
-                    Data_str = ByteArrayToString(UsefulData);
-                    beaconText.setText(Data_str);
+                    Data_str = UsefulData.toString();
+                    UIDText.setText(Data_str);
                     break;
                 case URL_PACKET:
                     switch (BuffData[10]) {
@@ -128,11 +136,16 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     print_Str = print_Str + Data_str;
-                    beaconText.setText(print_Str);
+                    URLText.setText(print_Str);
                     break;
                 case TLM_PACKET:
                     // TODO Parse This Packet
                     Log.i(TAG, "A Spider");
+                    printScanRecord (BuffData);
+                    byte[] Voltage = Arrays.copyOfRange(BuffData, 10, 11);
+                    byte[] Temprature = Arrays.copyOfRange(BuffData, 12, 13);
+                    Data_str = ByteArrayToString(Voltage) + "\n" + ByteArrayToString(Temprature);
+                    TLMText.setText(Data_str);
                     break;
             }
 
