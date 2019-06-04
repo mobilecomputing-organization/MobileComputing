@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/DistanceText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:text="0000 meters"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/DistacneLable"
+        app:layout_constraintTop_toBottomOf="@+id/LongitutdeText" />
+
+    <TextView
+        android:id="@+id/LatitudeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="48.745742"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/latitudeLable"
+        app:layout_constraintTop_toTopOf="@+id/latitudeLable" />
+
+    <TextView
+        android:id="@+id/LongitutdeLable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Longitude : "
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="@+id/latitudeLable"
+        app:layout_constraintTop_toBottomOf="@+id/latitudeLable" />
+
+    <TextView
+        android:id="@+id/SpeedLable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Average Speed :"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="@+id/DistacneLable"
+        app:layout_constraintTop_toBottomOf="@+id/DistacneLable" />
+
+    <TextView
+        android:id="@+id/DistacneLable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Distance :"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="@+id/LongitutdeLable"
+        app:layout_constraintTop_toBottomOf="@+id/LongitutdeLable" />
+
+    <TextView
+        android:id="@+id/latitudeLable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="298dp"
+        android:text="Latitude : "
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.099"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/LongitutdeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:text="9.107246"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/LongitutdeLable"
+        app:layout_constraintTop_toBottomOf="@+id/LatitudeText" />
+
+    <TextView
+        android:id="@+id/SpeedText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:text="meters / sec"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/SpeedLable"
+        app:layout_constraintTop_toBottomOf="@+id/DistanceText" />
+
+    <Button
+        android:id="@+id/UpdateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="35dp"
+        android:text="Update"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/StopButton" />
+
+    <Button
+        android:id="@+id/ExitButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="35dp"
+        android:text="Exit"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/UpdateButton" />
+
+    <Button
+        android:id="@+id/StopButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="35dp"
+        android:text="Stop Logging"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/StartButton" />
+
+    <Button
+        android:id="@+id/StartButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="35dp"
+        android:text="Start Logging"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SpeedLable"
+        app:layout_constraintVertical_bias="0.472" />
+
+</android.support.constraint.ConstraintLayout>

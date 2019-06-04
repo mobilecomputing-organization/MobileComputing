@@ -1,4 +1,4 @@
-package com.example.excercise3gps;
+package mobilecomp.app1.gpslogger;
 
 import android.app.Service;
 import android.content.Context;
@@ -9,14 +9,18 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import java.io.File;
+import java.io.IOException;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -28,9 +32,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 public class ServiceLocation extends Service {
+    public ServiceLocation() {
+    }
+
     private static final String FILE_NAME = "sample.gpx";
     private static final String TAG = "ServiceLocation";
-
     private ServiceLocationImpl locationService_Ibinder;
     private Location location;
     Location previousLocation = null;
@@ -40,14 +46,20 @@ public class ServiceLocation extends Service {
     double averageSpeed = 0;
     private LocationManager locationManager;
     private LocationListener listener;
+    private long StartTime = 0;
+    private Document document;
+    private DocumentBuilder documentBuilder;
+    private Transformer transformer;
+    private File file;
+
 
     private class ServiceLocationImpl extends IServiceLocation.Stub {
 
         public double rpc_getLatitude() {
             if (location!= null )
-            return (location.getLatitude());
+                return (location.getLatitude());
             else
-                return -1;
+                return 0.0;
         }
 
         public double rpc_getLongitude() {
@@ -55,26 +67,32 @@ public class ServiceLocation extends Service {
             if (location!= null )
                 return (location.getLongitude());
             else
-                return -1;
+                return 0.0;
         }
 
         public double rpc_getDistance() { return (totalDistance);  }
 
-        public double rpc_getAverageSpeed() {
-            return (averageSpeed);
-        }
+        public double rpc_getAverageSpeed() { return calculateAverageSpeed();}
+
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         locationService_Ibinder = new ServiceLocationImpl();
-
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+
+        // create a new gpx file with required headers tags
+        Createnewfile();
+
 
         listener = new LocationListener() {
             @Override
             public void onLocationChanged(Location dynloc) {
+                if (StartTime == 0)
+                {
+                    StartTime = dynloc.getTime();
+                }
                 Log.i(TAG, " onLocationChanged: "+dynloc.toString());
                 if(previousLocation == null)
                     previousLocation = dynloc;
@@ -82,7 +100,6 @@ public class ServiceLocation extends Service {
                     previousLocation = location;
                 location = dynloc;
                 calculateDistance();
-                calculateAverageSpeed();
                 convertGPX();
             }
 
@@ -108,12 +125,17 @@ public class ServiceLocation extends Service {
                     interval,                       // hint for notification interval
                     minDistance,                    // hint for minimum position distance
                     listener);                      // callback receiver
+            Log.i(TAG,"requestLocationUpdates success");
         }
         catch (SecurityException e){
+            Log.i(TAG,"Exception caught in requestLocationUpdates");
         }
+
 
 
     }
+
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -140,95 +162,87 @@ public class ServiceLocation extends Service {
         Toast.makeText(this, "Background LocationService stopped.", Toast.LENGTH_LONG).show();
     }
 
-    private void convertGPX(){
+    private void Createnewfile()
+    {
         try {
-
             DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-
-            DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-
-            Document document = documentBuilder.newDocument();
-
+            documentBuilder = documentFactory.newDocumentBuilder();
+            document = documentBuilder.newDocument();
             // root element
             Element root = document.createElement("gpx");
             document.appendChild(root);
-
-            // wpt element
-            Element wpt = document.createElement("wpt");
-
-            root.appendChild(wpt);
-
-
-            // lat element
-            Element lat = document.createElement("lat");
-            lat.appendChild(document.createTextNode(Double.toString(location.getLatitude())));
-            wpt.appendChild(lat);
-
-            // lon element
-            Element lon = document.createElement("lon");
-            lon.appendChild(document.createTextNode(Double.toString(location.getLatitude())));
-            wpt.appendChild(lon);
-
-            // ele element
-            Element ele = document.createElement("ele");
-            ele.appendChild(document.createTextNode(Double.toString(location.getAltitude())));
-            wpt.appendChild(ele);
-
-            // time elements
-            Element time = document.createElement("time");
-            time.appendChild(document.createTextNode(Double.toString(location.getTime())));
-            wpt.appendChild(time);
-
-            // create the xml file
+            Element trk = document.createElement("trk");
+            root.appendChild(trk);
+            Element trkseg = document.createElement("trkseg");
+            trk.appendChild(trkseg);
             //transform the DOM Object to an XML File
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource domSource = new DOMSource(document);
-            StreamResult streamResult = new StreamResult(
-                    new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) +
-                            File.separator + FILE_NAME));
 
-            // If you use
-            // StreamResult result = new StreamResult(System.out);
-            // the output will be pushed to the standard output ...
-            // You can use that for debugging
+            file =  new File(Environment.getExternalStorageDirectory() + File.separator + FILE_NAME);
+            StreamResult streamResult = new StreamResult(file);
             transformer.transform(domSource, streamResult);
 
-            System.out.println(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) +
+            System.out.println(Environment.getExternalStorageDirectory() +
                     File.separator + FILE_NAME+"Done creating XML File");
+        } catch (ParserConfigurationException | TransformerException e) {
+            e.printStackTrace();
+        }
+    }
+    private void convertGPX(){
+        try {
 
-        } catch (ParserConfigurationException pce) {
-            pce.printStackTrace();
-        } catch (TransformerException tfe) {
-            tfe.printStackTrace();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+            // root element
+            document= documentBuilder.parse(file);
+
+            Node root = document.getElementsByTagName("trkseg").item(0);
+
+            // wpt element
+            Element trkpt = document.createElement("trkpt");
+            trkpt.setAttribute("lat",Double.toString(location.getLatitude()));
+            trkpt.setAttribute("lon",Double.toString(location.getLongitude()));
+            root.appendChild(trkpt);
+
+            // ele element
+            Element ele = document.createElement("ele");
+            ele.appendChild(document.createTextNode(Double.toString(location.getAltitude())));
+            trkpt.appendChild(ele);
+
+            // time elements
+            Element time = document.createElement("time");
+            //set time
+            Date date = new Date(location.getTime());
+            time.setTextContent(format.format(date));
+            trkpt.appendChild(time);
+
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource domSource = new DOMSource(document);
+            StreamResult streamResult = new StreamResult(file);
+            transformer.transform(domSource, streamResult);
+
+        } catch (SAXException | IOException | TransformerException ex){
+            ex.printStackTrace();
         }
     }
 
     private void calculateDistance() {
         float[] result = {0};
         Location.distanceBetween(previousLocation.getLatitude(),previousLocation.getLongitude(),location.getLatitude(),location.getLongitude(),result);
-        Log.i(TAG,Float.toString(result[0]));
-        double theta = previousLocation.getLongitude() - location.getLongitude();
-        double distance = Math.sin(deg2rad(previousLocation.getLatitude()))
-                * Math.sin(deg2rad(location.getLatitude()))
-                + Math.cos(deg2rad(previousLocation.getLatitude()))
-                * Math.cos(deg2rad(location.getLatitude()))
-                * Math.cos(deg2rad(theta));
-        distance = Math.acos(distance);
-        distance = rad2deg(distance);
-        distance = distance * 60 * 1.1515;
-        totalDistance = totalDistance + distance;
+        Log.i(TAG,"result 1" +Float.toString(result[0]));
+        totalDistance = totalDistance + result[0];
     }
 
-    private double deg2rad(double deg) {
-        return (deg * Math.PI / 180.0);
-    }
-
-    private double rad2deg(double rad) {
-        return (rad * 180.0 / Math.PI);
-    }
-    private void calculateAverageSpeed() {
-        if(averageSpeed == 0) averageSpeed = location.getSpeed();
-        averageSpeed = (averageSpeed + location.getSpeed())*0.5;
+    private double calculateAverageSpeed() {
+        if (location!=null)
+        {
+            Log.i(TAG,Long.toString(location.getTime()-StartTime));
+            return totalDistance/((location.getTime()-StartTime)/1000);
+        }
+        else
+            return 0.0;
     }
 }

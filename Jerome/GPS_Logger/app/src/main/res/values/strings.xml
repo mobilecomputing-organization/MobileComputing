@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">GPS_Logger</string>
+    <string name="_0000_meters">0000 meters</string>
+    <string name="longitude">Longitude :</string>
+    <string name="distance">Distance :</string>
+    <string name="average_speed">Average Speed :</string>
+    <string name="latitude">Latitude :</string>
+    <string name="_48_745742">48.745742</string>
+    <string name="_9_107246">9.107246</string>
+    <string name="meters_sec">meters / sec</string>
+    <string name="start_logging">Start Logging</string>
+    <string name="stop_logging">Stop Logging</string>
+    <string name="update">Update</string>
+    <string name="exit">Exit</string>
+</resources>
