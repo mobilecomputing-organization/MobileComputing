@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         handler = new Handler();
 
-        beaconText.setText("UID:\n\nURL:\n\nVoltage:\nTemp\n");
+        //beaconText.setText("UID:\n\nURL:\n\nVoltage:\nTemp\n");
         // Initializes Bluetooth adapter
         final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
@@ -115,7 +115,9 @@ public class MainActivity extends AppCompatActivity {
                     Data_str = bytesToHex(UsefulData);
                     UIDText.setText(Data_str);
                     Dist = CalcDist(Rssi,BuffData[12]);
-                    DistText.setText(Double.toString(Dist));
+                    DistText.setText("Tx Power = " + Byte.toString(BuffData[12]) +"\n"+
+                            "RSSI = " + Rssi + "\n"+
+                            "Distance = " + Double.toString(Dist));
                     break;
                 case URL_PACKET:
                     switch (BuffData[13]) {
@@ -142,7 +144,9 @@ public class MainActivity extends AppCompatActivity {
 
                     print_Str = print_Str + Data_str;
                     Dist = CalcDist(Rssi,BuffData[12]);
-                    DistText.setText(Double.toString(Dist));
+                    DistText.setText("Tx Power = " + Byte.toString(BuffData[12]) +"\n"+
+                                     "RSSI = " + Rssi + "\n"+
+                                     "Distance = " + Double.toString(Dist));
                     URLText.setText(print_Str);
                     break;
                 case TLM_PACKET:
@@ -150,7 +154,8 @@ public class MainActivity extends AppCompatActivity {
                     byte[] Temprature = Arrays.copyOfRange(BuffData, 15, 17);
                     int TestVolt = ((Voltage[0] & 0xFFFF) << 8) | (Voltage[1] & 0xFFFF);
 
-                    Data_str = ((double)TestVolt/1000) + "mV\n" + Temprature[0] + "." + Temprature[1] + " C";
+                    Data_str = ((double)TestVolt/1000) + "mV\n" + Byte.toString(Temprature[0]) + "." + Byte.toString(Temprature[1]) + " °C";
+                    //Log.i(TAG,Byte.toString(Temprature[0]) + " and . "+ Byte.toString(Temprature[1]));
                     TLMText.setText(Data_str);
                     break;
             }
@@ -171,9 +176,11 @@ public class MainActivity extends AppCompatActivity {
     {
         double Dist;
      //   Log.i(TAG,Byte.toString(Ref_TxPower) + "\nRssi:" + Rssi );
-        double Temp = ((double)(Ref_TxPower - 60) - (double)Rssi)/((double)20);
+        double Temp = ((double)(Ref_TxPower - 60) - (double)Rssi)/((double)20);//41//60
         Log.i(TAG,Double.toString(Temp));
         Dist = Math.pow(10,Temp);
+        Dist = Math.round(Dist*100); // for rounding off with 2 decimal places
+        Dist = Dist/100;
         return Dist;
     }
 
