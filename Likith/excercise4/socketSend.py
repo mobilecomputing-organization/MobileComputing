@@ -1,0 +1,28 @@
+import socket
+import time
+
+UDP_IP = "192.168.210.255"
+UDP_PORT = 5012
+MESSAGE = "Hello, World!"
+IP  = "192.168.210.170"
+seqNumber = 0
+#print "UDP target IP:", UDP_IP
+#print "UDP target port:", UDP_PORT
+#print "message:", MESSAGE
+
+sock = socket.socket(socket.AF_INET, # Internet
+                     socket.SOCK_DGRAM) # UDP
+sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+t_end = time.time() + 30
+#print " while 1111111"
+#while time.time() < t_end:
+    #print " while inside"
+    #seqNumber = seqNumber+1
+    #print " TX Address: ", IP, " TX data: ", seqNumber
+sock.sendto(str(1), (UDP_IP, UDP_PORT))
+    #time.sleep(5)
+
+
+sock.close()
+#print " while 2222222"
+
