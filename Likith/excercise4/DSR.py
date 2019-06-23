@@ -33,10 +33,10 @@ while time.time() < t_end:
         data,addr = sock.recvfrom(1024) # buffer size is 1024 bytes
         rcvd_seqNumber = data
         if addr is not None:
-			if addr[0] != IP 
-				print  "RX( ", addr, IP, " ) ", "Latency", " RX data: ", data
+                if addr[0] != IP: 
+                print  "RX( ", addr, IP, " ) ", "Latency", " RX data: ", data
         
-            if (rcvd_seqNumber != orig_seqNumber) or (orig_seqNumber == -1) :
+        if (rcvd_seqNumber != orig_seqNumber) or (orig_seqNumber == -1) :
                 orig_seqNumber = rcvd_seqNumber
                 #print " TX Address: ", IP, " TX data: ", orig_seqNumber
                 sock.sendto(orig_seqNumber, (UDP_IP, UDP_PORT))
