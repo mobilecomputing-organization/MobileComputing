@@ -15,6 +15,8 @@ orig_seqNumber = -1
 rcvd_seqNumber = -1
 t_end = time.time() + 60
 addr = None
+RREP="1"
+RREQ="0"
 
 sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
@@ -24,7 +26,8 @@ sock.settimeout(60)
 
 if len(sys.argv) is  2:
 	orig_seqNumber = sys.argv[1]
-	sock.sendto(sys.argv[1], (UDP_IP, UDP_PORT))
+	data = RREQ+":"+node
+	sock.sendto(data, (UDP_IP, UDP_PORT))
 	
 
 while time.time() < t_end:
@@ -32,14 +35,10 @@ while time.time() < t_end:
     try:
         data,addr = sock.recvfrom(1024) # buffer size is 1024 bytes
         rcvd_seqNumber = data
-        if addr is not None:
-                if addr[0] != IP: 
-                print  "RX( ", addr, IP, " ) ", "Latency", " RX data: ", data
-        
-        if (rcvd_seqNumber != orig_seqNumber) or (orig_seqNumber == -1) :
-                orig_seqNumber = rcvd_seqNumber
-                #print " TX Address: ", IP, " TX data: ", orig_seqNumber
-                sock.sendto(orig_seqNumber, (UDP_IP, UDP_PORT))
+        if addr is not None and addr[0] != IP and node not in data:
+                print  "from: ", addr, " data: ", data
+                sock.sendto(data+":"+node, (UDP_IP, UDP_PORT))
+                addr = None
 
     except socket.error:
         pass
