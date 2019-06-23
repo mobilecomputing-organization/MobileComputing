@@ -13,7 +13,7 @@ print " IP: ", IP
 
 orig_seqNumber = -1
 rcvd_seqNumber = -1
-t_end = time.time() + 60
+t_end = time.time() + 40
 addr = None
 RREP="1"
 RREQ="0"
@@ -22,7 +22,7 @@ sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 sock.bind((UDP_IP, UDP_PORT))
-sock.settimeout(60)
+sock.settimeout(40)
 
 if len(sys.argv) is  2:
 	orig_seqNumber = sys.argv[1]
@@ -73,4 +73,6 @@ while time.time() < t_end:
         pass
 
 sock.close()
+print "finished"
+print ";;;;;;",RList
 print "finished"
