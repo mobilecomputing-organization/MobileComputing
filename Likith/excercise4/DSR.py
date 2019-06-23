@@ -40,13 +40,12 @@ while time.time() < t_end:
                         if node not in data:
                                 print  "from: ", addr[0], " data: ", data
                                 sock.sendto(data+":"+node, (UDP_IP, UDP_PORT))
-                                data[0]=RREP
-                                sock.sendto(data+":"+node, (UDP_IP, UDP_PORT))
+                                sock.sendto(RREP+data[1:]+":"+node, (UDP_IP, UDP_PORT))
                                 addr = None
                 else:
                         if node in data:
                                 if node == data[2:5]:
-                                        print data[2:]
+                                        print "path to ",data[-3:]," is ",data[2:]
                                 else:
                                         sock.sendto(data, (UDP_IP, UDP_PORT))
                                 addr = None
