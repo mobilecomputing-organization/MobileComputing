@@ -49,7 +49,7 @@ while time.time() < t_end:
                                 else:
                                         idx = data.find(node)
                                         s= UDP_IP[:-3]+data[idx-4:idx-1]
-                                        print "return ",s
+                                        print "return: ",s ," data:" ,data
                                         sock.sendto(data, (UDP_IP[:-3]+data[idx-4:idx-1], UDP_PORT))
                                         #sock.sendto(data, (UDP_IP, UDP_PORT))
                                 addr = None
