@@ -44,7 +44,7 @@ while time.time() < t_end:
                                 sock.sendto(data+":"+node, (UDP_IP, UDP_PORT))
                                 s2 = data+":"+node
                                 print "addr  s2" ,s2
-                                sock.sendto(RREP+data[1:]+":"+node, (UDP_IP, UDP_PORT))
+                                sock.sendto(RREP+data[1:]+":"+node, (UDP_IP[:-3]+data[-3:], UDP_PORT))
                                 addr = None
                 else:
                         if node in data:
