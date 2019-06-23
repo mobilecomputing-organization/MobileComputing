@@ -46,14 +46,14 @@ while time.time() < t_end:
                 if data[0] == RREQ:
                         if node not in data:
                                 s1 = data+":"+node
-                                print "send s1 " ,s1
+                                #print "send s1 " ,s1
                                 sock.sendto(data+":"+node, (UDP_IP, UDP_PORT))
                                 #time.sleep(1)
                                 
                                 s2 = RREP+data[1:]+":"+node
                                 ss= UDP_IP[:-3]+data[-3:]
                                 sock.sendto(RREP+data[1:]+":"+node, (UDP_IP, UDP_PORT))
-                                print "send s2" ,s2,"ip", ss
+                                #print "send s2" ,s2,"ip", ss
                                 addr = None
                 else:
                         if node in data:
@@ -65,7 +65,7 @@ while time.time() < t_end:
                                 else:
                                         idx = data.find(node)
                                         s= UDP_IP[:-3]+data[idx-4:idx-1]
-                                        print "addr[0]",addr[0],"return: ",s ," data:" ,data
+                                        print "from",addr[0],"to: ",s ," data:" ,data
                                         #sock.sendto(data, (UDP_IP[:-3]+data[idx-4:idx-1], UDP_PORT))
 
                                         if data[2:] not in RList:
