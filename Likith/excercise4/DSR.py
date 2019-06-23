@@ -40,7 +40,7 @@ while time.time() < t_end:
         fulldata,addr = sock.recvfrom(1024) # buffer size is 1024 bytes
         data = fulldata.split("#",1)[0]
         #msg2 = fulldata.split("#",1)[1]
-        #data[0:123.12.12.33#hello word]
+        #data[0:123.12.12.33#hello word#19:12:33time stamp]
         if addr is not None and addr[0] != IP:
                 print  "from: ", addr[0], " data: ", data , "msgRecv",msg2
                 if data[0] == RREQ:
@@ -79,5 +79,5 @@ while time.time() < t_end:
 
 sock.close()
 print "finished"
-print ";;;;;;",RList
+print "Route list ",RList
 print "finished"
