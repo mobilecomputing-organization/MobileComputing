@@ -34,28 +34,32 @@ while time.time() < t_end:
 
     try:
         data,addr = sock.recvfrom(1024) # buffer size is 1024 bytes
-        rcvd_seqNumber = data
+        
         if addr is not None and addr[0] != IP:
+                print  "from: ", addr[0], " data: ", data
                 if data[0] == RREQ:
                         if node not in data:
-                                print  "from: ", addr[0], " data: ", data
                                 s1 = data+":"+node
-                                print "addr s1 " ,s1
+                                print "send s1 " ,s1
                                 sock.sendto(data+":"+node, (UDP_IP, UDP_PORT))
-                                s2 = data+":"+node
-                                print "addr  s2" ,s2
-                                sock.sendto(RREP+data[1:]+":"+node, (UDP_IP[:-3]+data[-3:], UDP_PORT))
+                                time.sleep(1)
+                                
+                                s2 = RREP+data[1:]+":"+node
+                                ss= UDP_IP[:-3]+data[-3:]
+                                sock.sendto(RREP+data[1:]+":"+node, (UDP_IP, UDP_PORT))
+                                print "send s2" ,s2,"ip", ss
                                 addr = None
                 else:
                         if node in data:
+                                print "we have node"
                                 if node == data[2:5]:
                                         print "path to ",data[-3:]," is ",data[2:]
                                 else:
                                         idx = data.find(node)
                                         s= UDP_IP[:-3]+data[idx-4:idx-1]
                                         print "addr[0]",addr[0],"return: ",s ," data:" ,data
-                                        sock.sendto(data, (UDP_IP[:-3]+data[idx-4:idx-1], UDP_PORT))
-                                        #sock.sendto(data, (UDP_IP, UDP_PORT))
+                                        #sock.sendto(data, (UDP_IP[:-3]+data[idx-4:idx-1], UDP_PORT))
+                                        sock.sendto(data, (UDP_IP, UDP_PORT))
                                 addr = None
                         
 
