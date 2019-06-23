@@ -11,7 +11,7 @@ print " IP: ", IP
 
 orig_seqNumber = -1
 rcvd_seqNumber = -1
-t_end = time.time() + 40
+t_end = time.time() + 30
 addr = None
 RREP="1"
 RREQ="0"
@@ -23,7 +23,7 @@ sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 sock.bind((UDP_IP, UDP_PORT))
-sock.settimeout(40)
+sock.settimeout(30)
 
 if len(sys.argv) >=  2:
 	orig_seqNumber = sys.argv[1]
