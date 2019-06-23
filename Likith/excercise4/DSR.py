@@ -35,10 +35,22 @@ while time.time() < t_end:
     try:
         data,addr = sock.recvfrom(1024) # buffer size is 1024 bytes
         rcvd_seqNumber = data
-        if addr is not None and addr[0] != IP and node not in data:
-                print  "from: ", addr, " data: ", data
-                sock.sendto(data+":"+node, (UDP_IP, UDP_PORT))
-                addr = None
+        if addr is not None and addr[0] != IP:
+                if data[0] == RREQ:
+                        if node not in data:
+                                print  "from: ", addr[0], " data: ", data
+                                sock.sendto(data+":"+node, (UDP_IP, UDP_PORT))
+                                data[0]=RREP
+                                sock.sendto(data+":"+node, (UDP_IP, UDP_PORT))
+                                addr = None
+                else:
+                        if node in data:
+                                if node == data[2:5]:
+                                        print data[2:]
+                                else:
+                                        sock.sendto(data, (UDP_IP, UDP_PORT))
+                                addr = None
+                        
 
     except socket.error:
         pass
