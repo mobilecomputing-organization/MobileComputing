@@ -47,7 +47,9 @@ while time.time() < t_end:
                                 if node == data[2:5]:
                                         print "path to ",data[-3:]," is ",data[2:]
                                 else:
-                                        sock.sendto(data, (UDP_IP, UDP_PORT))
+                                        idx = data.find(node)
+                                        sock.sendto(data, (UDP_IP[:-3]+data[idx-4:idx-1], UDP_PORT))
+                                        #sock.sendto(data, (UDP_IP, UDP_PORT))
                                 addr = None
                         
 
