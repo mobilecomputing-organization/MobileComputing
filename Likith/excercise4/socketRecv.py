@@ -1,5 +1,6 @@
 import socket
 import time
+import commands
 
 UDP_IP = "192.168.210.255"
 IP = commands.getoutput("ifconfig wlan0 | grep -Po  'inet \K[\d.]+'")
@@ -22,15 +23,14 @@ while time.time() < t_end:
     try:
         data,addr = sock.recvfrom(1024) # buffer size is 1024 bytes
         rcvd_seqNumber = data
-		
-		if addr is not None:
-			print  "RX( ", addr, IP, " ) ", "Latency", " RX data: ", data
-			addr = None
+        if addr is not None:
+            print  "RX( ", addr, IP, " ) ", "Latency", " RX data: ", data
+            addr = None
         
-			if (rcvd_seqNumber != orig_seqNumber) or (orig_seqNumber == -1) :
-				orig_seqNumber = rcvd_seqNumber
-				#print " TX Address: ", IP, " TX data: ", orig_seqNumber
-				sock.sendto(orig_seqNumber, (UDP_IP, UDP_PORT))
+            if (rcvd_seqNumber != orig_seqNumber) or (orig_seqNumber == -1) :
+                orig_seqNumber = rcvd_seqNumber
+                #print " TX Address: ", IP, " TX data: ", orig_seqNumber
+                sock.sendto(orig_seqNumber, (UDP_IP, UDP_PORT))
 
     except socket.error:
         addr = None

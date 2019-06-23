@@ -3,8 +3,7 @@ import time
 
 UDP_IP = "192.168.210.255"
 UDP_PORT = 5012
-MESSAGE = "Hello, World!"
-IP  = "192.168.210.170"
+
 seqNumber = 0
 #print "UDP target IP:", UDP_IP
 #print "UDP target port:", UDP_PORT
