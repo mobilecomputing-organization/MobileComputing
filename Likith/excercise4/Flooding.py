@@ -3,8 +3,6 @@ import time
 import commands
 import sys
 
-
-print "HELLoo!!!!",str(sys.argv)
 UDP_IP = "192.168.210.255"
 IP = commands.getoutput("ifconfig wlan0 | grep -Po  'inet \K[\d.]+'")
 node = IP[-3:]
@@ -32,8 +30,8 @@ while time.time() < t_end:
     try:
         data,addr = sock.recvfrom(1024) # buffer size is 1024 bytes
         rcvd_seqNumber = data
-        if addr is not None:
-            print  "RX( ", addr, IP, " ) ", "Latency", " RX data: ", data
+        if addr is not None and addr[0] != IP:
+            print  "From ", addr, "Latency", "data: ", data
             addr = None
         
             if (rcvd_seqNumber != orig_seqNumber) or (orig_seqNumber == -1) :
