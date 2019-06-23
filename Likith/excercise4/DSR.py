@@ -17,7 +17,7 @@ t_end = time.time() + 60
 addr = None
 RREP="1"
 RREQ="0"
-
+RList=[]
 sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -42,7 +42,7 @@ while time.time() < t_end:
                                 s1 = data+":"+node
                                 print "send s1 " ,s1
                                 sock.sendto(data+":"+node, (UDP_IP, UDP_PORT))
-                                time.sleep(1)
+                                #time.sleep(1)
                                 
                                 s2 = RREP+data[1:]+":"+node
                                 ss= UDP_IP[:-3]+data[-3:]
@@ -53,15 +53,21 @@ while time.time() < t_end:
                         if node in data:
                                 print "we have node"
                                 if node == data[2:5]:
+                                        RList.append(data[2:])
                                         print "path to ",data[-3:]," is ",data[2:]
                                 else:
                                         idx = data.find(node)
                                         s= UDP_IP[:-3]+data[idx-4:idx-1]
                                         print "addr[0]",addr[0],"return: ",s ," data:" ,data
                                         #sock.sendto(data, (UDP_IP[:-3]+data[idx-4:idx-1], UDP_PORT))
-                                        sock.sendto(data, (UDP_IP, UDP_PORT))
+
+                                        if data[2:] in RList:
+                                                print "!!!!!"
+                                        else:
+                                                sock.sendto(data, (UDP_IP, UDP_PORT))
+                                                RList.append(data[2:])
                                 addr = None
-                        
+
 
     except socket.error:
         pass
