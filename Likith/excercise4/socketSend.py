@@ -1,8 +1,11 @@
 import socket
 import time
+import commands
 
 UDP_IP = "192.168.210.255"
+IP = commands.getoutput("ifconfig wlan0 | grep -Po  'inet \K[\d.]+'")
 UDP_PORT = 5012
+print " IP: ", IP
 
 seqNumber = 0
 #print "UDP target IP:", UDP_IP
