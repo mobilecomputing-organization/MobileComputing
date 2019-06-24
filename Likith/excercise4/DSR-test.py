@@ -69,11 +69,13 @@ while time.time() < t_end:
                         if node in data:
                                 #print "we have node"
                                 if node == data[2:5]:
-                                        if data[2:] not in RList:
+					saveData=data.split("#",1)[0]
+                                        if saveData[2:] not in RList:
 						print "endtime",str(time.time()) ,"starttime",startTime
 						latency = str(time.time() - float(startTime))
-                                                RList.append(data[2:]+":latency="+latency)
-                                                print "path to ",data[-3:]," is ",data[2:],"latency ", latency 
+                                                #RList.append(data[2:]+"#latency="+latency)
+						RList.append(saveData[2:])
+                                                print "path to ",data[-3:]," is ",saveData[2:],"latency ", latency 
                                 else:
                                         idx = data.find(node)
                                         s= UDP_IP[:-3]+data[idx-4:idx-1]
