@@ -26,14 +26,14 @@ txtime = str(datetime.time(datetime.utcnow()))
 txtime = txtime[-9:]
 
 if len(sys.argv) is  2:
-	#Get seq number from user. If no seq number only Rx, no Tx (flodding trigger) from node
-	orig_seqNumber = str(random.randint(1,101))
-	
-	#Prepare header for flooding -> "seq_number:current_txtime"
-	data = str(orig_seqNumber + ":" + txtime + ":" + "Message sent from " + IP + ' - " ' + sys.argv[1] + ' "' + " received at the node!")
+    #Generate random sequence number
+    orig_seqNumber = str(random.randint(1,101))
+    
+    #Prepare header for flooding -> "seq_number:current_txtime"
+    data = str(orig_seqNumber + ":" + txtime + ":" + "Message sent from " + IP + ' - " ' + sys.argv[1] + ' "' + " received at the node!")
 
-	# Send UDP Datagram
-	sock.sendto(data, (UDP_IP, UDP_PORT))
+    # Send UDP Datagram
+    sock.sendto(data, (UDP_IP, UDP_PORT))
 
 while time.time() < t_end:
 
@@ -41,32 +41,31 @@ while time.time() < t_end:
         data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
         
         if addr is not None and addr[0] != IP:
-	    rxtime = str(datetime.time(datetime.utcnow()))
-	    rxtime = float(rxtime[-9:])
-			
-	    # Decode flooding header
-	    rcvd_seqNumber = data.split(":")[0]
-	    latency =  str( (rxtime - float(data.split(":")[1])) * 1000 )
-	    msg = data.split(":")[2]
-			        
+            rxtime = str(datetime.time(datetime.utcnow()))
+            rxtime = float(rxtime[-9:])
+                
+            # Decode flooding header
+            rcvd_seqNumber = data.split(":")[0]
+            latency =  str( (rxtime - float(data.split(":")[1])) * 1000 )
+            msg = data.split(":")[2]
+                        
             if (rcvd_seqNumber != orig_seqNumber) or (orig_seqNumber == -1) :
                 orig_seqNumber = rcvd_seqNumber
 
                 #print " TX Address: ", IP, " TX data: ", orig_seqNumber
-		print ( msg )
+                print ( msg )
 
-		ntxtime = str(datetime.time(datetime.utcnow()))
-		ntxtime = ntxtime [-9:]
+                ntxtime = str(datetime.time(datetime.utcnow()))
+                ntxtime = ntxtime [-9:]
 
-		#Prepare header for flooding -> "seq_number:current_txtime"
-		data = str(orig_seqNumber + ":" + ntxtime + ":" + msg )
+                #Prepare header for flooding -> "seq_number:current_txtime"
+                data = str(orig_seqNumber + ":" + ntxtime + ":" + msg )
 
                 sock.sendto(data , (UDP_IP, UDP_PORT))
 
-            #print  "From: ", addr, "Latency:", latency, "data: ", data
-	    print(str("Node pair (Tx IP, Rx IP, Latency) : (" + addr[0] + ", " + IP + ", " + latency + " ms)" ))
-            addr = None
-
+                #print  "From: ", addr, "Latency:", latency, "data: ", data
+                print(str("Node pair (Tx IP, Rx IP, Latency) : (" + addr[0] + ", " + IP + ", " + latency + " ms)" ))
+                addr = None
 
     except socket.error:
         addr = None
