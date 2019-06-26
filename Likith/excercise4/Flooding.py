@@ -2,6 +2,7 @@ import socket
 import time
 import commands
 import sys
+import random
 from datetime import datetime
 
 UDP_IP = "192.168.210.255"
@@ -26,10 +27,10 @@ txtime = txtime[-9:]
 
 if len(sys.argv) is  2:
 	#Get seq number from user. If no seq number only Rx, no Tx (flodding trigger) from node
-	orig_seqNumber = sys.argv[1]
+	orig_seqNumber = str(random.randint(1,101))
 	
 	#Prepare header for flooding -> "seq_number:current_txtime"
-	data = str(sys.argv[1] + ":" + txtime + ":" + "Message for Task 1, from node " + IP + ", received at the node!")
+	data = str(orig_seqNumber + ":" + txtime + ":" + "Message sent from " + IP + ' - " ' + sys.argv[1] + ' "' + " received at the node!")
 
 	# Send UDP Datagram
 	sock.sendto(data, (UDP_IP, UDP_PORT))
@@ -58,7 +59,7 @@ while time.time() < t_end:
 		ntxtime = ntxtime [-9:]
 
 		#Prepare header for flooding -> "seq_number:current_txtime"
-		data = str(orig_seqNumber + ":" + ntxtime + ":" + "Message for Task 1 to all nodes!")
+		data = str(orig_seqNumber + ":" + ntxtime + ":" + msg )
 
                 sock.sendto(data , (UDP_IP, UDP_PORT))
 
